@@ -1,0 +1,35 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /faq.html
+Allow: /docs/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /images/
+Allow: /favicon.*
+Allow: /android-chrome-*
+Allow: /apple-touch-icon*
+Disallow: /norobots/
+Disallow: /*.tex$
+
+# Crawl-delay (in seconds) - respectful crawling
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://twg-fas.org/sitemap.xml
+Sitemap: https://www.twg-fas.org/sitemap.xml
+
+# Allow specific search engines
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 1
+
+# Disable bad bots
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+

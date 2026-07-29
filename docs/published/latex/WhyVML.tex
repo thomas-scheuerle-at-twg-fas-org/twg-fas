@@ -1,0 +1,502 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+
+\geometry{margin=2.5cm}
+
+\title{
+Vehicle Machine Language (VML)
+\\
+Draft White Paper Version 0.1
+}
+
+\author{
+Working Draft
+}
+
+\begin{document}
+
+\begin{abstract}
+
+This document proposes Vehicle Machine Language (VML), a machine-native
+behavior representation for autonomous vehicles and advanced driver
+assistance systems.
+
+VML is motivated by the observation that natural language is highly
+effective for human communication but poorly suited for direct machine
+execution.
+Unlike natural language, VML provides explicit semantics,
+deterministic interpretation and formal verification capabilities.
+
+The purpose of VML is not to replace human requirements writing.
+Instead, VML serves as the target representation into which human
+requirements are translated.
+
+Future systems may employ Large Language Models (LLMs) or
+Vision-Language Models (VLMs) during requirements engineering to
+perform this translation.
+However, no runtime component of the vehicle is expected to consume
+natural language directly.
+
+This document defines the first conceptual version of VML and provides
+sufficient detail to enable an initial implementation.
+
+\end{abstract}
+
+\maketitle
+\begin{center}
+\textbf{Origin:} https://twg-fas.org
+\end{center}
+
+\section{Introduction}
+
+Modern autonomous systems process increasingly complex information.
+
+A typical driving decision may depend on:
+
+\begin{itemize}
+\item observed objects,
+\item traffic regulations,
+\item temporal constraints,
+\item mission goals,
+\item safety requirements,
+\item uncertainty estimates.
+\end{itemize}
+
+Most existing systems represent these concepts using separate
+subsystems.
+
+VML attempts to provide a common formal representation for all
+behavior-relevant information.
+
+The long-term vision is:
+
+\[
+Natural\ Language
+\rightarrow
+VML
+\rightarrow
+Vehicle\ Behavior
+\]
+
+where natural language exists exclusively during engineering and VML
+becomes the native runtime language.
+
+\section{Design Principles}
+
+VML is built around six principles.
+
+\subsection{P1: No Runtime Natural Language}
+
+No runtime decision shall depend on natural-language interpretation.
+
+\[
+Runtime \cap NaturalLanguage = \emptyset
+\]
+
+\subsection{P2: Explicit Semantics}
+
+Every VML statement shall have one unique interpretation.
+
+\subsection{P3: Composability}
+
+Complex behavior shall be constructed from simpler behavior.
+
+\subsection{P4: Verifiability}
+
+Every VML specification shall be suitable for formal analysis.
+
+\subsection{P5: Human Readability}
+
+While machine-oriented, VML should remain understandable to engineers.
+
+\subsection{P6: Technology Independence}
+
+VML shall not depend on any specific perception system,
+planning algorithm or neural network architecture.
+
+\section{VML Overview}
+
+VML consists of six layers.
+
+\[
+VML
+=
+L
+\oplus
+T
+\oplus
+M
+\oplus
+P
+\oplus
+G
+\oplus
+D
+\]
+
+where
+
+\begin{align}
+L & : Logical Layer \\
+T & : Temporal Layer \\
+M & : Metric Layer \\
+P & : Probabilistic Layer \\
+G & : Goal Layer \\
+D & : Deontic Layer
+\end{align}
+
+Each layer answers a distinct question.
+
+\begin{center}
+\begin{tabular}{ll}
+Layer & Question \\
+\hline
+Logic & What exists? \\
+Temporal & When must it happen? \\
+Metric & How much? \\
+Probability & How certain are we? \\
+Goal & What do we want? \\
+Deontic & What is allowed? \\
+\end{tabular}
+\end{center}
+
+\section{Logical Layer}
+
+The logical layer defines facts.
+
+Example:
+
+\begin{verbatim}
+Pedestrian(P1)
+Vehicle(V4)
+Lane(L2)
+\end{verbatim}
+
+Interpretation:
+
+\begin{itemize}
+\item object P1 is a pedestrian
+\item object V4 is a vehicle
+\item object L2 is a lane
+\end{itemize}
+
+Relationships are represented as predicates.
+
+\begin{verbatim}
+InLane(V4,L2)
+AheadOf(P1,Ego)
+\end{verbatim}
+
+The logical layer provides the vocabulary used by the remaining
+layers.
+
+\section{Temporal Layer}
+
+The temporal layer defines behavior over time.
+
+VML adopts four basic temporal operators.
+
+\subsection{Always}
+
+\[
+\Box \varphi
+\]
+
+Meaning:
+
+\begin{quote}
+``\(\varphi\) must always hold.''
+\end{quote}
+
+Example:
+
+\[
+\Box(\neg Collision)
+\]
+
+\subsection{Eventually}
+
+\[
+\Diamond \varphi
+\]
+
+Meaning:
+
+\begin{quote}
+``\(\varphi\) must eventually become true.''
+\end{quote}
+
+Example:
+
+\[
+\Diamond ParkingCompleted
+\]
+
+\subsection{Next}
+
+\[
+\bigcirc \varphi
+\]
+
+Meaning:
+
+\begin{quote}
+``\(\varphi\) must hold in the next state.''
+\end{quote}
+
+\subsection{Until}
+
+\[
+\varphi U \psi
+\]
+
+Meaning:
+
+\begin{quote}
+``Maintain \(\varphi\) until \(\psi\) becomes true.''
+\end{quote}
+
+Example:
+
+\[
+Braking
+U
+PedestrianClear
+\]
+
+\section{Metric Layer}
+
+Driving requires continuous values.
+
+Examples include distance, velocity and acceleration.
+
+VML introduces built-in arithmetic expressions.
+
+Examples:
+
+\[
+Distance(Ego,P1) > 2m
+\]
+
+\[
+Velocity(Ego) < 30km/h
+\]
+
+\[
+LateralAcceleration(Ego) < 0.3g
+\]
+
+Metric expressions may be combined with temporal operators.
+
+Example:
+
+\[
+\Box
+(
+Distance(Ego,P1) > 2m
+)
+\]
+
+\section{Probabilistic Layer}
+
+Perception is uncertain.
+
+Instead of representing facts as strictly true or false, VML
+associates confidence values.
+
+Example:
+
+\[
+Probability(Pedestrian(P1))
+=
+0.95
+\]
+
+VML introduces confidence thresholds.
+
+Example:
+
+\[
+Require_{0.99}
+(
+SafeDistance
+)
+\]
+
+Interpretation:
+
+Safety shall hold with at least 99\% confidence.
+
+\section{Goal Layer}
+
+Goals describe desired future states.
+
+Example:
+
+\begin{verbatim}
+Goal ParkingCompleted
+\end{verbatim}
+
+or
+
+\begin{verbatim}
+Goal At(Ego,ChargingStation)
+\end{verbatim}
+
+Goals differ from constraints.
+
+Constraint:
+
+\[
+\Box(\neg Collision)
+\]
+
+Goal:
+
+\[
+\Diamond ParkingCompleted
+\]
+
+A valid plan must satisfy all constraints while attempting to achieve
+all goals.
+
+\section{Deontic Layer}
+
+The deontic layer represents obligations, permissions and
+prohibitions.
+
+These concepts map naturally to traffic regulations.
+
+Obligation:
+
+\[
+O(YieldToPedestrian)
+\]
+
+Permission:
+
+\[
+P(ChangeLane)
+\]
+
+Prohibition:
+
+\[
+F(CrossSolidLane)
+\]
+
+Traffic regulations should preferably be represented using deontic
+constructs rather than procedural code.
+
+\section{Example}
+
+Natural language requirement:
+
+\begin{quote}
+The vehicle shall stop for pedestrians and remain stopped until the
+crossing is clear.
+\end{quote}
+
+VML representation:
+
+\[
+O(YieldToPedestrian)
+\]
+
+\[
+\Box
+(
+PedestrianCrossing
+\rightarrow
+(
+Braking
+U
+CrossingClear
+)
+)
+\]
+
+This representation is substantially more explicit and directly
+machine-processable.
+
+\section{Example Runtime Architecture}
+
+A reference implementation may follow the architecture:
+
+\[
+Sensors
+\rightarrow
+Perception
+\rightarrow
+VML\ State
+\rightarrow
+Planner
+\rightarrow
+Controller
+\]
+
+The perception system updates predicates.
+
+The planner searches for actions satisfying all constraints.
+
+The controller executes the selected action.
+
+\section{VML Core Profile}
+
+The first implementable VML profile is intentionally limited.
+
+Required features:
+
+\begin{itemize}
+\item predicates,
+\item temporal operators,
+\item metric expressions,
+\item goals,
+\item obligations.
+\end{itemize}
+
+Optional future features:
+
+\begin{itemize}
+\item probabilistic reasoning,
+\item utility functions,
+\item learning components,
+\item ontology inheritance,
+\item multi-agent reasoning.
+\end{itemize}
+
+This subset is sufficient for constructing an initial parser,
+runtime monitor and planner.
+
+\section{Conclusion}
+
+VML is proposed as a machine-native language for autonomous systems.
+
+The central philosophy is simple:
+
+\[
+NaturalLanguage
+\neq
+RuntimeLanguage
+\]
+
+Human requirements are authored in natural language.
+
+They are translated into VML.
+
+Runtime systems operate exclusively on VML.
+
+In this manner natural language assumes the role of source code,
+while VML becomes the executable behavioral representation used within
+the vehicle.
+
+Future versions of this document will extend the language,
+formalize syntax and define reference execution semantics.
+
+\end{document}

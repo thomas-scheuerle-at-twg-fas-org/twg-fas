@@ -1,0 +1,26 @@
+Contact: security@twg-fas.org
+Expires: 2027-07-28T00:00:00Z
+Preferred-Languages: en
+Canonical: https://twg-fas.org/security.txt
+Policy: https://twg-fas.org/SECURITY.md
+
+# Security Disclosure Policy
+#
+# This file is based on the RFC 9116 standard and helps security researchers
+# understand how to report security vulnerabilities.
+#
+# The Technical Working Group for Formal Automotive Systems is committed to
+# addressing security concerns responsibly.
+#
+# If you discover a security vulnerability:
+#
+# 1. DO NOT post it publicly on GitHub issues or discussions
+# 2. Send details to: security@twg-fas.org
+# 3. Include: vulnerability description, potential impact, and suggested fix
+# 4. Allow reasonable time for response and mitigation before disclosure
+#
+# We will acknowledge receipt within 3 business days and provide regular updates
+# on the status of your report.
+#
+# We appreciate responsible disclosure and will credit the researcher in our
+# acknowledgments unless you prefer to remain anonymous.

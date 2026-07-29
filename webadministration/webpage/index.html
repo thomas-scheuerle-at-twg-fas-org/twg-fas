@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Open standard for formal behavioral representation in AI-driven automotive systems. VML enables transparent, verifiable and certifiable autonomous driving technology.">
+  <meta name="keywords" content="VML, Vehicle Machine Language, formal verification, autonomous driving, automotive AI, open standard">
+  <meta property="og:title" content="Technical Working Group for Formal Automotive Systems">
+  <meta property="og:description" content="Building an open, vendor-neutral standard for formal behavioral representation in AI-driven automotive systems.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twg-fas.org/">
+  <meta property="og:image" content="https://twg-fas.org/diagram1.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Technical Working Group for Formal Automotive Systems">
+  <meta name="twitter:description" content="Open standard for formal behavioral representation in AI-driven automotive systems.">
+  <meta name="twitter:image" content="https://twg-fas.org/diagram1.png">
+  <link rel="canonical" href="https://twg-fas.org/">
+  <title>Technical Working Group for Formal Automotive Systems</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0a1628;
+      --navy2:  #0f2040;
+      --blue:   #1a3a6b;
+      --accent: #2e6be6;
+      --accent2:#4a9eff;
+      --text:   #e8edf5;
+      --muted:  #8fa3bf;
+      --border: #1e3a5a;
+      --card:   #0d1e38;
+      --white:  #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,22,40,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    nav .brand { font-size: 0.9rem; font-weight: 600; color: var(--accent2); letter-spacing: 0.02em; text-decoration: none; }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    nav ul a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    nav ul a:hover { color: var(--white); }
+    nav ul .repo-link a { color: var(--accent2); font-weight: 600; display: inline-flex; align-items: center; gap: 0.28rem; }
+    nav ul .repo-link a:hover { color: var(--white); }
+
+    /* SECTIONS */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .container-wide { max-width: 1200px; margin: 0 auto; }
+
+    /* HERO */
+    #hero {
+      min-height: 90vh; display: flex; align-items: center; padding: 6rem 2rem 4rem;
+      background: radial-gradient(ellipse 60% 50% at 70% 40%, rgba(46,107,230,0.12) 0%, transparent 70%), var(--navy);
+    }
+    #hero .container { width: 100%; }
+    .hero-tag {
+      display: inline-block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); border: 1px solid var(--accent); border-radius: 2px;
+      padding: 0.3rem 0.7rem; margin-bottom: 1.8rem;
+    }
+    h1 { font-size: clamp(1.8rem,4vw,3rem); font-weight: 700; line-height: 1.2; color: var(--white); margin-bottom: 1.2rem; max-width: 750px; }
+    .hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin-bottom: 2.5rem; }
+    .btn { display: inline-block; padding: 0.75rem 1.8rem; border-radius: 3px; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+    .btn-primary { background: var(--accent); color: var(--white); margin-right: 1rem; }
+    .btn-primary:hover { background: #3a7cf5; }
+    .btn-outline { border: 1px solid var(--border); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* DIVIDER */
+    .divider { height: 1px; background: linear-gradient(to right,transparent,var(--border),transparent); margin: 0 2rem; }
+
+    /* SECTION HEADERS */
+    .section-label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.7rem; }
+    h2 { font-size: clamp(1.4rem,3vw,2rem); color: var(--white); margin-bottom: 1.2rem; font-weight: 600; }
+    h3 { font-size: 1rem; color: var(--accent2); font-weight: 600; margin-bottom: 0.5rem; }
+    p { color: var(--muted); margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--text); }
+
+    /* DIAGRAM */
+    #diagram { background: var(--navy2); padding: 4rem 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    #diagram .container-wide { text-align: center; }
+    .diagram-caption { font-size: 0.8rem; color: var(--muted); margin-top: 1rem; font-style: italic; }
+    .diagram-wrapper { position: relative; display: inline-block; cursor: zoom-in; margin-top: 2rem; max-width: 100%; }
+    .diagram-wrapper img { width: 100%; max-width: 1100px; border: 1px solid var(--border); border-radius: 4px; display: block; transition: opacity 0.2s; }
+    .diagram-wrapper:hover img { opacity: 0.9; }
+    .zoom-hint { position: absolute; bottom: 12px; right: 14px; background: rgba(10,22,40,0.8); color: var(--muted); font-size: 0.72rem; padding: 0.3rem 0.6rem; border-radius: 2px; pointer-events: none; }
+
+    /* LIGHTBOX */
+    #lightbox { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(5,12,24,0.96); justify-content: center; align-items: center; padding: 1.5rem; cursor: zoom-out; }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 8px 60px rgba(0,0,0,0.8); }
+    #lightbox .close-btn { position: fixed; top: 1.2rem; right: 1.5rem; color: var(--muted); font-size: 2rem; cursor: pointer; line-height: 1; background: none; border: none; }
+    #lightbox .close-btn:hover { color: var(--white); }
+
+    /* CARDS */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 1.2rem; margin-top: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; }
+    .card-icon { font-size: 1.4rem; margin-bottom: 0.7rem; }
+
+    /* TWO-COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    @media (max-width: 680px) { .two-col { grid-template-columns: 1fr; gap: 2rem; } }
+
+    /* QUOTE */
+    .principle { border-left: 3px solid var(--accent); padding: 1rem 1.5rem; margin: 2rem 0; background: var(--card); border-radius: 0 4px 4px 0; font-size: 1.05rem; color: var(--text); font-style: italic; }
+
+    /* DOCS */
+    .doc-list { list-style: none; margin-top: 1.5rem; }
+    .doc-list li { background: var(--card); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 0.7rem; transition: border-color 0.2s; overflow: hidden; }
+    .doc-list li:hover { border-color: var(--accent); }
+    .doc-list li.doc-callout {
+      border-color: #3f8dff;
+      background: linear-gradient(90deg, rgba(46,107,230,0.24) 0%, rgba(13,30,56,0.96) 45%);
+      box-shadow: inset 0 0 0 1px rgba(74,158,255,0.28);
+    }
+    .doc-list li.doc-callout:hover { border-color: #6bb2ff; }
+    .doc-list li.doc-callout .doc-title { color: #f2f7ff; }
+    .badge-callout {
+      background: rgba(74,158,255,0.24);
+      border-color: #6bb2ff;
+      color: #d9ebff;
+    }
+    .doc-row-link { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; color: inherit; text-decoration: none; }
+    .doc-row-link:hover .doc-link { text-decoration: underline; }
+    .doc-row-disabled { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; opacity: 0.85; }
+    .doc-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .doc-meta { flex: 1; }
+    .doc-title { color: var(--text); font-weight: 600; font-size: 0.95rem; }
+    .doc-desc { color: var(--muted); font-size: 0.82rem; }
+    .doc-link { color: var(--accent2); text-decoration: none; font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+    .doc-link:hover { text-decoration: underline; }
+    .badge { display: inline-block; font-size: 0.68rem; padding: 0.15rem 0.5rem; background: rgba(46,107,230,0.2); border: 1px solid var(--accent); color: var(--accent2); border-radius: 2px; margin-left: 0.5rem; vertical-align: middle; }
+
+    /* CONTACT */
+    #contact { background: var(--navy2); }
+    form { margin-top: 2rem; max-width: 600px; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.3rem; margin-top: 1rem; }
+    label:first-child { margin-top: 0; }
+    input, textarea, select { width: 100%; background: var(--navy); border: 1px solid var(--border); color: var(--text); padding: 0.65rem 0.9rem; border-radius: 3px; font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 120px; }
+    .form-note { font-size: 0.78rem; color: var(--muted); margin-top: 1rem; }
+    .form-note a { color: var(--accent2); text-decoration: none; }
+    .form-note a:hover { text-decoration: underline; }
+
+    /* SCOPE */
+    .scope-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 0.5rem; margin-top: 1.2rem; list-style: none; }
+    .scope-list li { padding: 0.5rem 0.8rem; background: var(--card); border: 1px solid var(--border); border-radius: 3px; font-size: 0.85rem; color: var(--muted); }
+    .scope-list li::before { content: "-> "; color: var(--accent); }
+
+    /* PARTICIPATE */
+    #participate { background: linear-gradient(135deg, var(--navy2) 0%, var(--blue) 100%); }
+    .org-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1.5rem 0; }
+    .org-tag { padding: 0.4rem 0.9rem; border: 1px solid var(--border); border-radius: 2px; font-size: 0.82rem; color: var(--muted); }
+
+    /* FOOTER */
+    footer { background: var(--navy); border-top: 1px solid var(--border); padding: 3rem 2rem 2rem; }
+    .footer-inner { max-width: 900px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem; }
+    @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-brand { font-size: 0.85rem; color: var(--white); font-weight: 600; margin-bottom: 0.6rem; }
+    .footer-text { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+    .footer-heading { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 0.4rem; }
+    .footer-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--accent2); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 1.5rem; font-size: 0.78rem; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+
+    /* LEGAL SECTIONS */
+    .legal-section { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; margin-top: 2rem; max-width: 700px; }
+    .legal-section:target { display: block; }
+    .legal-section h3 { color: var(--white); font-size: 1.1rem; margin-bottom: 1rem; }
+    .legal-section p, .legal-section address { color: var(--muted); font-style: normal; font-size: 0.88rem; line-height: 1.8; }
+
+    @media (max-width: 600px) { nav ul { gap: 0.8rem; } nav ul a { font-size: 0.78rem; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Technical Working Group for Formal Automotive Systems",
+    "url": "https://twg-fas.org/",
+    "description": "Open initiative developing Vehicle Machine Language (VML), a formal behavioral representation standard for AI-driven automotive systems.",
+    "logo": "https://twg-fas.org/favicon.png",
+    "sameAs": [
+      "https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "availableLanguage": "en"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-label="Diagram enlarged view">
+  <button class="close-btn" onclick="closeLightbox()" aria-label="Close">&#x00D7;</button>
+  <img src="diagram1.png" alt="VML Architecture Diagram enlarged">
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="brand">TWG&middot;FAS</a>
+  <ul>
+    <li><a href="#objective">Objective</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#motivation">Motivation</a></li>
+    <li><a href="#standard">Open Standard</a></li>
+    <li><a href="#drafts">Drafts</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/blob/main/contributors/contributors.md" target="_blank" rel="noopener noreferrer">Contributors</a></li>
+    <li class="repo-link"><a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas" target="_blank" rel="noopener noreferrer" aria-label="TWG-FAS GitHub repository">&#x1F5C3; Repo</a></li>
+    <li><a href="#participate">Join</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-tag">Working Draft &middot; Initiative Phase</div>
+    <h1>Technical Working Group for Formal Automotive Systems</h1>
+    <p class="hero-sub">
+      Building an open, vendor-neutral standard for formal behavioral representation
+      in AI-driven automotive systems &mdash; enabling transparent, verifiable and
+      certifiable autonomous driving technology.
+    </p>
+    <a href="#participate" class="btn btn-primary">Join the Initiative</a>
+    <a href="#objective" class="btn btn-outline">Learn More</a>
+    <a href="faq.html" class="btn btn-outline">FAQ</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OBJECTIVE -->
+<section id="objective">
+  <div class="container">
+    <div class="two-col">
+      <div>
+        <p class="section-label">Project Objective</p>
+        <h2>Vehicle Machine Language (VML)</h2>
+        <p>
+          VML is envisioned as an open standard that serves as the formal
+          behavioral representation inside future AI-based driving systems.
+        </p>
+        <p>
+          Instead of allowing natural language to directly influence runtime
+          decision making, VML introduces a formally defined intermediate
+          representation that can be interpreted, analyzed, verified and
+          executed with <strong>deterministic semantics</strong>.
+        </p>
+        <p>
+          In this architecture, foundation models such as LLMs and
+          Vision-Language Models become <strong>semantic compilers</strong>
+          that translate human requirements into formal specifications.
+          Runtime systems operate exclusively on VML.
+        </p>
+      </div>
+      <div>
+        <div class="principle">
+          Natural language belongs to engineering.<br>
+          Formal languages belong to runtime systems.
+        </div>
+        <p>
+          This separation provides a clear distinction between human
+          communication and machine execution, while preserving the
+          full benefits of modern AI-assisted engineering.
+        </p>
+        <p>
+          The long-term vision is a transformation chain:<br>
+          <strong>Natural Language &rarr; VML &rarr; Vehicle Behavior</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARCHITECTURE DIAGRAM -->
+<section id="architecture" style="padding:4rem 2rem; background:var(--navy2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container-wide" style="text-align:center;">
+    <p class="section-label" style="text-align:center;">System Architecture</p>
+    <h2 style="text-align:center;">The VML Pipeline</h2>
+    <p style="color:var(--muted);max-width:640px;margin:0 auto 0.5rem;">
+      From human requirements through a foundation model as semantic compiler,
+      through VML as the formal runtime representation, to formal verification,
+      trajectory generation and vehicle execution.
+    </p>
+    <div class="diagram-wrapper" onclick="openLightbox()" title="Click to enlarge">
+      <img src="diagram1.png" alt="VML Architecture Diagram showing pipeline from Human Requirements through Foundation Model, VML, Formal Verification, Planner/Optimizer to Vehicle Controller, with VML Language Layers and Runtime Monitoring.">
+      <span class="zoom-hint">click to enlarge</span>
+    </div>
+    <p class="diagram-caption">
+      Figure 1 &mdash; The VML pipeline: engineering-time natural language is compiled into
+      formal VML by a foundation model; runtime components operate exclusively on VML.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MOTIVATION -->
+<section id="motivation">
+  <div class="container">
+    <p class="section-label">Motivation</p>
+    <h2>Why Formal Representation?</h2>
+    <p>
+      Modern automotive AI systems increasingly combine perception, reasoning
+      and planning into unified Vision-Language-Action architectures. While these
+      systems demonstrate impressive capabilities, <strong>natural language was
+      never designed as an execution language for safety-critical systems</strong>.
+    </p>
+    <p>
+      Natural language is inherently ambiguous, context-dependent and open to
+      interpretation &mdash; properties that make it excellent for human communication
+      but difficult to verify, certify and validate as part of an automotive
+      runtime system.
+    </p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#x26A0;</div>
+        <h3>The Problem</h3>
+        <p>Natural language ambiguity at runtime creates non-deterministic behavior that cannot be systematically verified or certified.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#x1F52C;</div>
+        <h3>The Principle</h3>
+        <p>A formal intermediate representation separates engineering communication from machine execution, making each independently optimizable.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#x2705;</div>
+        <h3>The Outcome</h3>
+        <p>Automotive AI becomes more transparent, testable and certifiable without restricting future advances in foundation models.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OPEN STANDARD -->
+<section id="standard">
+  <div class="container">
+    <div class="two-col">
+      <div>
+        <p class="section-label">Why an Open Standard?</p>
+        <h2>Vendor-Neutral, Open, Collaborative</h2>
+        <p>
+          Future automotive AI should not depend on proprietary behavioral languages.
+          An open standard allows the entire automotive ecosystem to build on a common
+          foundation.
+        </p>
+        <p>
+          The goal is not to standardize AI models themselves, but to standardize
+          the <strong>formal representation of behavioral intent</strong> that
+          connects engineering, verification and runtime execution.
+        </p>
+      </div>
+      <div>
+        <h3>An open standard enables</h3>
+        <ul class="scope-list" style="margin-top:0.8rem;">
+          <li>Interoperability between tools</li>
+          <li>Independent verification</li>
+          <li>Vendor-neutral implementations</li>
+          <li>Transparent certification</li>
+          <li>Long-term maintainability</li>
+          <li>Academic research</li>
+          <li>Regulatory collaboration</li>
+          <li>Broad industrial adoption</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:3.5rem;">
+      <p class="section-label">Expected Benefits</p>
+      <h2>What VML Delivers</h2>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">&#x1F6E1;</div>
+          <h3>Functional Safety</h3>
+          <p>Deterministic semantics suitable for analysis and formal verification under ISO 26262 and related standards.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x1F4CB;</div>
+          <h3>Regulatory Transparency</h3>
+          <p>Behavioral rules can be disclosed to authorities without revealing proprietary AI implementations.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x1F50D;</div>
+          <h3>Formal Verification</h3>
+          <p>Behavior becomes amenable to model checking, theorem proving, runtime monitoring and systematic testing.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x1F4A1;</div>
+          <h3>Explainability</h3>
+          <p>Decisions trace back to explicit formal rules instead of opaque natural-language prompts.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x2699;</div>
+          <h3>Better Development</h3>
+          <p>VML provides a common interface between requirements engineering, AI-assisted specification, simulation, testing and deployment.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x1F504;</div>
+          <h3>Technology Independence</h3>
+          <p>The formal language remains independent of perception algorithms, planning methods and future AI architectures.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:3.5rem;">
+      <p class="section-label">Scope</p>
+      <h2>Topics Under Development</h2>
+      <ul class="scope-list">
+        <li>Vehicle Machine Language (VML)</li>
+        <li>Formal behavioral semantics</li>
+        <li>Runtime execution models</li>
+        <li>Temporal &amp; deontic reasoning</li>
+        <li>Probabilistic behavior specification</li>
+        <li>Formal ontologies</li>
+        <li>Verification interfaces</li>
+        <li>Runtime monitoring</li>
+        <li>Testing methodologies</li>
+        <li>Reference implementations</li>
+        <li>Conformance testing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ETHICS BEFORE OWNERSHIP -->
+<section id="ethics">
+  <div class="container">
+    <p class="section-label">Governance</p>
+    <h2>Ethics Before Ownership</h2>
+    <p>
+      TWG·FAS is organized as an open, non-profit initiative because the behavioral specification
+      of autonomous systems affects <strong>public safety</strong>.
+    </p>
+    <p>
+      While manufacturers must be able to protect proprietary algorithms, training methods, and
+      commercial innovations, regulators and independent experts should be able to review the
+      formal behavioral intent of safety-critical systems.
+    </p>
+    <p>
+      An open standard creates this separation. It enables transparent verification and regulatory
+      review without requiring disclosure of intellectual property. We believe that broad adoption,
+      independent scrutiny, and open governance are essential for building trustworthy autonomous systems.
+    </p>
+    <p style="margin-top:1.8rem;">
+      <strong>Openness is therefore not only a technical decision, it is an ethical one.</strong>
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DRAFTS -->
+<section id="drafts">
+  <div class="container">
+    <p class="section-label">Current Drafts</p>
+    <h2>Specifications &amp; Working Documents</h2>
+    <p>
+      The following documents represent the current working drafts. All specifications
+      are developed under an open process and will be published as open standards.
+      The shared collaboration repository is available at
+      <a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas" target="_blank" rel="noopener noreferrer" style="color:var(--accent2);text-decoration:none;">github.com/thomas-scheuerle-at-twg-fas-org/twg-fas</a>.
+    </p>
+    <p>
+      New to VML? Start with the
+      <a href="faq.html" style="color:var(--accent2);text-decoration:none;font-weight:600;">Frequently Asked Questions</a>
+      for a concise overview before diving into the full drafts.
+    </p>
+    <ul class="doc-list">
+      <li>
+        <a href="docs/VML_whitepaper_v0_1.pdf" class="doc-row-link" aria-label="Open Vehicle Machine Language (VML) White Paper PDF">
+          <div class="doc-icon">&#x1F4C4;</div>
+          <div class="doc-meta">
+            <div class="doc-title">Vehicle Machine Language (VML) &mdash; White Paper <span class="badge">Draft v0.1</span></div>
+            <div class="doc-desc">Conceptual definition of VML, design principles, type system and initial formal grammar.</div>
+          </div>
+          <span class="doc-link">PDF</span>
+        </a>
+      </li>
+      <li>
+        <a href="docs/VML_0_1.pdf" class="doc-row-link" aria-label="Open VML Language Specification PDF">
+          <div class="doc-icon">&#x1F4C4;</div>
+          <div class="doc-meta">
+            <div class="doc-title">VML Language Specification <span class="badge">Draft v0.1</span></div>
+            <div class="doc-desc">Formal syntax, type system, temporal and deontic operators, probabilistic constructs.</div>
+          </div>
+          <span class="doc-link">PDF</span>
+        </a>
+      </li>
+      <li>
+        <div class="doc-row-disabled" aria-label="VML Runtime Model PDF coming soon">
+          <div class="doc-icon">&#x1F4C4;</div>
+          <div class="doc-meta">
+            <div class="doc-title">VML Runtime Model <span class="badge">Draft v0.1</span></div>
+            <div class="doc-desc">Execution semantics, runtime monitoring interface, compliance detection.</div>
+          </div>
+          <span class="doc-link">PDF coming soon</span>
+        </div>
+      </li>
+      <li class="doc-callout">
+        <a href="docs/OpenQuestionsVML_0_1.pdf" class="doc-row-link" aria-label="Open VML Open Questions call-to-action PDF">
+          <div class="doc-icon">&#x2753;</div>
+          <div class="doc-meta">
+            <div class="doc-title">VML Open Questions <span class="badge badge-callout">Call for Contribution</span></div>
+            <div class="doc-desc">Priority open points for VML v0.1 where domain experts can start contributing directly.</div>
+          </div>
+          <span class="doc-link">PDF</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas" target="_blank" rel="noopener noreferrer" class="doc-row-link" aria-label="Open TWG-FAS Working Repository on GitHub">
+          <div class="doc-icon">&#x1F5C3;</div>
+          <div class="doc-meta">
+            <div class="doc-title">TWG&middot;FAS Working Repository <span class="badge">Live</span></div>
+            <div class="doc-desc">Primary exchange point for working drafts, source files and collaborative contributions.</div>
+          </div>
+          <span class="doc-link">GitHub</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/blob/main/contributors/contributors.md" target="_blank" rel="noopener noreferrer" class="doc-row-link" aria-label="Open TWG-FAS contributors list on GitHub">
+          <div class="doc-icon">&#x1F465;</div>
+          <div class="doc-meta">
+            <div class="doc-title">TWG&middot;FAS Contributors</div>
+            <div class="doc-desc">Current list of organizations and individuals contributing to the initiative.</div>
+          </div>
+          <span class="doc-link">Contributors</span>
+        </a>
+      </li>
+      <li>
+        <a href="docs/TWGFAS_manifesto.pdf" class="doc-row-link" aria-label="Open TWG-FAS Manifesto and Working Mode PDF">
+          <div class="doc-icon">&#x1F4C4;</div>
+          <div class="doc-meta">
+            <div class="doc-title">TWG&middot;FAS Manifesto &amp; Working Mode <span class="badge">Draft</span></div>
+            <div class="doc-desc">Working group charter, open standards development process, governance principles and licensing.</div>
+          </div>
+          <span class="doc-link">PDF</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PARTICIPATE -->
+<section id="participate">
+  <div class="container">
+    <p class="section-label">Participation</p>
+    <h2>Join the Initiative</h2>
+    <p>
+      The initiative is currently in its initial working draft phase with one founding
+      member. We are actively seeking contributors to establish a consortium for
+      developing this open standard.
+    </p>
+    <p>
+      All technical discussions, working drafts and future specifications are developed
+      through an open and collaborative process. Contributions from any organization
+      or individual aligned with the vision are welcome.
+    </p>
+    <div class="org-tags">
+      <span class="org-tag">Automotive OEMs</span>
+      <span class="org-tag">Tier-1 Suppliers</span>
+      <span class="org-tag">Semiconductor Vendors</span>
+      <span class="org-tag">Software Companies</span>
+      <span class="org-tag">Universities</span>
+      <span class="org-tag">Research Institutes</span>
+      <span class="org-tag">Standardization Organizations</span>
+      <span class="org-tag">Government Agencies</span>
+      <span class="org-tag">Independent Researchers</span>
+    </div>
+    <a href="#contact" class="btn btn-primary">Get in Touch</a>
+    <a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Open GitHub Repository</a>
+    <p style="margin-top:1rem; font-size:0.86rem; color:var(--muted);">
+      See current contributors:
+      <a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/blob/main/contributors/contributors.md" target="_blank" rel="noopener noreferrer" style="color:var(--accent2); text-decoration:none;">contributors/contributors.md</a>
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <p class="section-label">Contact</p>
+    <h2>Get Involved</h2>
+    <p>
+      If you are interested in contributing to the working group, have questions about
+      the specifications, or would like to explore collaboration opportunities, please
+      reach out.
+    </p>
+    <form id="kontaktformular" action="https://www.ingenieurbuero-thomas-scheuerle.de/form/kontakte.php" method="post" enctype="multipart/form-data">
+      <label for="anrede">Salutation</label>
+      <select id="anrede" name="anrede" required>
+        <option value="">&#x2014; select &#x2014;</option>
+        <option value="Mr">Mr</option>
+        <option value="Ms">Ms</option>
+        <option value="Mx">Mx</option>
+      </select>
+
+      <label for="titel">Title (optional)</label>
+      <input type="text" id="titel" name="titel" placeholder="Dr., Prof., etc.">
+
+      <label for="vorname">First Name</label>
+      <input type="text" id="vorname" name="vorname" placeholder="Your first name" autocomplete="given-name" required>
+
+      <label for="name">Last Name</label>
+      <input type="text" id="name" name="name" placeholder="Your last name" autocomplete="family-name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+
+      <label for="telefon">Phone (optional)</label>
+      <input type="text" id="telefon" name="telefon" placeholder="+49 ..." autocomplete="tel">
+
+      <label for="firma">Organization (optional)</label>
+      <input type="text" id="firma" name="firma" placeholder="Organization or company" autocomplete="organization">
+
+      <label for="role">Role / Organization Type</label>
+      <select id="role" name="role">
+        <option value="">&#x2014; select &#x2014;</option>
+        <option value="Automotive OEM">Automotive OEM</option>
+        <option value="Tier-1 Supplier">Tier-1 Supplier</option>
+        <option value="Semiconductor Vendor">Semiconductor Vendor</option>
+        <option value="Software Company">Software Company</option>
+        <option value="University / Research Institute">University / Research Institute</option>
+        <option value="Standardization Organization">Standardization Organization</option>
+        <option value="Government Agency">Government Agency</option>
+        <option value="Independent Researcher">Independent Researcher</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="betreff">Subject</label>
+      <input type="text" id="betreff" name="betreff" placeholder="How would you like to contribute?" required>
+
+      <label for="nachricht">Message</label>
+      <textarea id="nachricht" name="nachricht" placeholder="Describe your interest or questions&#x2026;" required></textarea>
+
+      <div style="height:1px;overflow:hidden;position:absolute;left:-9999px;" aria-hidden="true">
+        <label for="mail">Leave this field empty</label>
+        <input type="email" id="mail" name="mail" value="" tabindex="-1" autocomplete="off">
+      </div>
+      <input type="hidden" id="chkspmtm" name="chkspmtm" value="">
+      <input type="hidden" id="chkspmkc" name="chkspmkc" value="chkspmbt">
+
+      <input type="hidden" id="sicherheitscode" name="sicherheitscode" placeholder="Enter code from backend captcha, if requested">
+
+      <input type="hidden" name="q_id" value="">
+
+      <input type="hidden" id="q" name="q" placeholder="Answer backend security question, if requested">
+
+
+      <input type="hidden" name="mail-copy" value="0" style="width:auto;margin-top:0.2rem;">
+
+
+      <label style="display:flex;align-items:flex-start;gap:0.5rem;margin-top:0.8rem;">
+        <input type="checkbox" name="datenschutz" value="akzeptiert" style="width:auto;margin-top:0.2rem;" required>
+        <span style="color:var(--muted);font-size:0.85rem;">I agree to the privacy policy and consent to being contacted regarding TWG&middot;FAS activities.</span>
+      </label>
+
+      <div style="margin-top:1.2rem;">
+        <button type="submit" class="btn btn-primary" id="submitButton" name="kf-km">Send Message</button>
+      </div>
+      <p class="form-note">
+        <span style="display: block; color: red; font-weight: bold;">
+        By pressing this button a temporary session cookie will be received from and transmitted to www.ingenieurbuero-thomas-scheuerle.de.
+        </span> 
+        See <a href="#disclaimer">Disclaimer</a> and <a href="#impressum">Impressum</a>.
+      </p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Technical Working Group for Formal Automotive Systems</div>
+        <p class="footer-text">
+          An independent initiative to develop an open, vendor-neutral standard for
+          formal behavioral representation in AI-driven automotive systems.<br><br>
+          TWG&middot;FAS is in its founding phase. All specifications are working drafts
+          subject to open community review.
+        </p>
+      </div>
+      <div>
+        <div class="footer-heading">Navigation</div>
+        <ul class="footer-links">
+          <li><a href="#objective">Objective</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#motivation">Motivation</a></li>
+          <li><a href="#standard">Open Standard</a></li>
+          <li><a href="#drafts">Drafts</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas" target="_blank" rel="noopener noreferrer">Repository</a></li>
+          <li><a href="#participate">Join</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Legal</div>
+        <ul class="footer-links">
+          <li><a href="#impressum">Impressum</a></li>
+          <li><a href="#disclaimer">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Impressum (shown when targeted via #impressum) -->
+    <div id="impressum" class="legal-section">
+      <h3>Impressum</h3>
+      <address>
+        Thomas Scheuerle<br>
+        Leonbergerstrasse 64/8<br>
+        71292 Friolzheim<br>
+        Germany<br><br>
+        Phone: +49 (0) xxx xxx xxxx <em>(to be updated)</em><br>
+        Email: contact@twg-fas.org <em>(to be updated)</em>
+      </address>
+      <p style="margin-top:1rem;">
+        Responsible for content according to &sect; 55 Abs. 2 RStV:<br>
+        Thomas Scheuerle, address as above.
+      </p>
+      <p style="margin-top:0.8rem;">
+        <a href="#" style="color:var(--accent2);font-size:0.82rem;" onclick="history.back();return false;">&larr; Close</a>
+      </p>
+    </div>
+
+    <!-- Disclaimer (shown when targeted via #disclaimer) -->
+    <div id="disclaimer" class="legal-section">
+      <h3>Disclaimer</h3>
+      <p>
+        <strong>Content:</strong> The information provided on this website reflects
+        the current state of working drafts developed by the Technical Working Group
+        for Formal Automotive Systems. All specifications are preliminary and subject
+        to change through the open standards process.
+      </p>
+      <p>
+        <strong>External Links:</strong> This website may contain links to external
+        websites. TWG&middot;FAS has no control over the content of linked external sites
+        and assumes no liability for their content.
+      </p>
+      <p>
+        <strong>Intellectual Property:</strong> Unless stated otherwise, all content,
+        diagrams and working draft texts are the property of the respective authors.
+        Working drafts are intended for open publication under a to-be-determined
+        open license.
+      </p>
+      <p>
+        <strong>Liability:</strong> This website is provided for informational purposes.
+        No warranty is given regarding completeness, accuracy or fitness for a
+        particular purpose.
+      </p>
+      <p style="margin-top:0.8rem;">
+        <a href="#" style="color:var(--accent2);font-size:0.82rem;" onclick="history.back();return false;">&larr; Close</a>
+      </p>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Technical Working Group for Formal Automotive Systems. Working draft &mdash; not a final standard.</span>
+      <span>
+        <a href="#impressum" style="color:var(--muted);text-decoration:none;">Impressum</a>
+        &nbsp;&middot;&nbsp;
+        <a href="#disclaimer" style="color:var(--muted);text-decoration:none;">Disclaimer</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function openLightbox() {
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  (function() {
+    var form = document.getElementById('kontaktformular');
+    if (!form) return;
+    var timeField = document.getElementById('chkspmtm');
+    if (timeField) {
+      timeField.value = Math.floor(Date.now() / 1000).toString();
+    }
+    var clickField = document.getElementById('chkspmkc');
+    var submitButton = document.getElementById('submitButton');
+    var enableClickToken = function() {
+      if (clickField) {
+        clickField.value = 'chkspmhm';
+      }
+    };
+    if (submitButton) {
+      submitButton.addEventListener('mouseenter', enableClickToken);
+      submitButton.addEventListener('touchstart', enableClickToken, { passive: true });
+      submitButton.addEventListener('click', enableClickToken);
+    }
+  })();
+</script>
+
+</body>
+</html>

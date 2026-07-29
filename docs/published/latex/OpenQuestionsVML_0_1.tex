@@ -1,0 +1,586 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{longtable}
+
+\geometry{margin=2.5cm}
+
+\title{
+Roadmap Towards the First Practical VML Implementation\\
+Discussion Paper for the Technical Working Group for Formal Automotive Systems
+}
+
+\author{Working Draft}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\begin{center}
+\textbf{Origin:} https://twg-fas.org
+\end{center}
+
+\begin{abstract}
+The VML whitepaper establishes a compelling vision:
+natural language is an engineering-time artifact,
+while formal machine-interpretable specifications
+govern runtime vehicle behavior.
+
+However, a significant gap remains between the conceptual
+language definition and a practical interoperable implementation.
+
+This document identifies the most important unresolved questions,
+ranks them by implementation relevance,
+and proposes a roadmap for future standardization work.
+
+The central question is not whether VML is useful,
+but what additional specifications are required so that
+two independent organizations can implement VML and obtain
+compatible runtime behavior.
+\end{abstract}
+
+\tableofcontents
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Current State of the Initiative}
+
+The current VML draft successfully defines:
+
+\begin{itemize}
+\item motivation and architectural role;
+\item layered language model;
+\item basic grammar;
+\item monitor semantics;
+\item conformance concepts;
+\item examples of behavioral specifications.
+\end{itemize}
+
+The current documents answer:
+
+\begin{quote}
+``What should VML represent?''
+\end{quote}
+
+but do not yet fully answer:
+
+\begin{quote}
+``What artifacts must exist,
+what data flows through them,
+and how is a VML program connected to a real vehicle stack?''
+\end{quote}
+
+The following sections identify the highest-priority gaps.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Priority Ranking of Open Topics}
+
+\begin{longtable}{|p{1cm}|p{6cm}|p{6cm}|}
+\hline
+Priority &
+Topic &
+Reason \\
+\hline
+
+P0 &
+Canonical State Model &
+No implementation can execute VML without a standardized runtime state representation.\\
+\hline
+
+P0 &
+Artifact Model &
+It is currently unclear what constitutes a VML package or deployment artifact.\\
+\hline
+
+P0 &
+Signal Binding Specification &
+No standard mechanism exists for connecting perception, planning, localization and map data to VML symbols.\\
+\hline
+
+P1 &
+Evaluation Semantics &
+Layer ordering and runtime execution order are not clearly defined.\\
+\hline
+
+P1 &
+Planner Integration Contract &
+Unclear how VML interacts with planners and trajectory generation.\\
+\hline
+
+P1 &
+Predicate Classification &
+No distinction exists between observable facts, derived facts and planner actions.\\
+\hline
+
+P2 &
+Legal Rule Libraries &
+No concept for jurisdiction-specific legal rule sets exists.\\
+\hline
+
+P2 &
+Ontology Packaging &
+Reuse and exchange of ontology definitions remain unspecified.\\
+\hline
+
+P3 &
+Advanced Probability Model &
+Useful but not required for an initial implementation.\\
+\hline
+
+P3 &
+Certification Profiles &
+Important long-term objective but not a blocker for a first prototype.\\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Highest Priority: Canonical State Model}
+
+\subsection{Problem}
+
+The specification states that implementations must map
+perception, localization, map and planning data into a
+canonical state representation.
+
+However, the structure of that state remains undefined.
+
+Without a common state model there is no interoperability.
+
+Two implementations may use the same VML file
+while interpreting symbols differently.
+
+\subsection{Questions to Resolve}
+
+\begin{enumerate}
+
+\item Which primitive types exist?
+
+\item Are coordinates standardized?
+
+\item How are dynamic objects represented?
+
+\item How are lanes represented?
+
+\item How are predicted trajectories represented?
+
+\item How is uncertainty attached to observations?
+
+\item How are timestamps handled?
+
+\item How are multi-rate signals handled?
+
+\end{enumerate}
+
+\subsection{Recommended Deliverable}
+
+VML Runtime State Model v0.1
+
+The state model should become a normative document.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Highest Priority: Artifact Model}
+
+\subsection{Problem}
+
+The specification discusses programs,
+parsers,
+monitors,
+traces,
+ontologies
+and verification artifacts.
+
+However,
+it is unclear what a complete deployable VML package looks like.
+
+\subsection{Open Questions}
+
+Should a VML deployment contain:
+
+\begin{itemize}
+\item one file?
+\item multiple files?
+\item imports?
+\item metadata?
+\item rule libraries?
+\item ontologies?
+\item test traces?
+\item expected verdict streams?
+\end{itemize}
+
+\subsection{Proposed Structure}
+
+\begin{verbatim}
+vehicle_mission/
+    manifest.yml
+    mission.vml
+    legal_profile/
+    ontology/
+    bindings/
+    traces/
+    verdicts/
+\end{verbatim}
+
+A package model should be standardized early.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Signal Binding and Data Mapping}
+
+\subsection{Problem}
+
+The language refers to symbols such as
+
+\begin{verbatim}
+Ego.Velocity
+DistanceToPedestrian
+TrafficLight.State
+\end{verbatim}
+
+but their data source is undefined.
+
+\subsection{Questions}
+
+\begin{enumerate}
+
+\item Does VML define signal names?
+
+\item Who owns signal definitions?
+
+\item Are naming conventions mandatory?
+
+\item Can multiple sensor sources provide the same symbol?
+
+\item How is uncertainty attached?
+
+\item How is signal validity represented?
+
+\end{enumerate}
+
+\subsection{Deliverable}
+
+State Binding Specification.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Layer Ordering and Evaluation Semantics}
+
+\subsection{Problem}
+
+The language defines several layers:
+
+\begin{itemize}
+\item Logic
+\item Temporal
+\item Metric
+\item Probability
+\item Goal
+\item Deontic
+\item Ontology
+\item Utility
+\end{itemize}
+
+The specification does not explicitly define whether the ordering
+is:
+
+\begin{itemize}
+\item pedagogical,
+\item conceptual,
+\item dependency-based,
+\item implementation-based,
+\item execution-based.
+\end{itemize}
+
+\subsection{Question}
+
+Can two implementations evaluate the same VML program
+and guarantee identical results?
+
+\subsection{Recommendation}
+
+Define a normative evaluation pipeline.
+
+Example:
+
+\begin{enumerate}
+\item ontology expansion
+\item symbol resolution
+\item metric evaluation
+\item probabilistic evaluation
+\item logical evaluation
+\item temporal progression
+\item deontic activation
+\item goal updates
+\item utility ranking
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Planner Integration Contract}
+
+\subsection{Problem}
+
+The architecture references:
+
+\begin{quote}
+VML Evaluator $\rightarrow$
+Constraint Filter $\rightarrow$
+Trajectory Optimizer
+\end{quote}
+
+but the interface remains unspecified.
+
+\subsection{Questions}
+
+\begin{enumerate}
+
+\item Does VML generate planner constraints?
+
+\item Does VML reject trajectories?
+
+\item Does VML assign costs?
+
+\item Does VML activate fallback maneuvers?
+
+\item Can VML request replanning?
+
+\item Can VML force emergency actions?
+\end{enumerate}
+
+\subsection{Recommendation}
+
+Define a planner-facing API.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Predicate Classification}
+
+\subsection{Problem}
+
+VML currently treats all predicates similarly.
+
+In practice there are different categories.
+
+\subsection{Proposed Classification}
+
+\begin{description}
+
+\item[Observed Predicate]
+Directly measurable.
+
+\item[Derived Predicate]
+Computed from state.
+
+\item[Probabilistic Predicate]
+Associated with confidence.
+
+\item[Planner Intent Predicate]
+Represents planner decisions.
+
+\item[Action Predicate]
+Represents requested behavior.
+
+\item[Legal Predicate]
+Represents regulatory abstractions.
+
+\end{description}
+
+\subsection{Example}
+
+\begin{verbatim}
+TrafficLight.State = RED
+\end{verbatim}
+
+Observed Predicate.
+
+\begin{verbatim}
+IntersectionClear
+\end{verbatim}
+
+Derived Predicate.
+
+\begin{verbatim}
+ExecuteMinimalRiskManeuver
+\end{verbatim}
+
+Action Predicate.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Jurisdiction and Legal Profiles}
+
+\subsection{Motivation}
+
+A vehicle driving in Germany,
+Japan,
+California
+and Saudi Arabia may follow different rules.
+
+VML therefore requires a mechanism for legal portability.
+
+\subsection{Proposal}
+
+Introduce legal profiles.
+
+\begin{verbatim}
+IMPORT LEGAL_PROFILE DE_STVO_2026;
+\end{verbatim}
+
+or
+
+\begin{verbatim}
+legal_profile:
+    jurisdiction: DE
+    regulation: STVO
+    version: 2026
+\end{verbatim}
+
+\subsection{Open Questions}
+
+\begin{itemize}
+\item How are legal updates versioned?
+\item How is provenance maintained?
+\item How are conflicts resolved?
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{End-to-End Example Requirement}
+
+One of the most important missing artifacts is a complete runnable example.
+
+\subsection{Suggested Reference Scenario}
+
+Driving from Ludwigsburg to Stuttgart.
+
+Required artifacts:
+
+\begin{enumerate}
+
+\item Mission specification
+
+\item Route definition
+
+\item State schema
+
+\item Legal rule library
+
+\item Ontology package
+
+\item Example traffic traces
+
+\item Expected monitor outputs
+
+\item Reference implementation
+
+\end{enumerate}
+
+\subsection{Success Criterion}
+
+Two independent implementations
+must generate identical verdict streams.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Reference Implementation Roadmap}
+
+\subsection*{Phase 1: Minimal Executable Core}
+
+\begin{itemize}
+\item parser
+\item AST
+\item state schema
+\item monitor
+\item trace execution
+\item verdict generation
+\end{itemize}
+
+\subsection*{Phase 2: Automotive Pilot}
+
+\begin{itemize}
+\item lane keeping
+\item speed limits
+\item traffic lights
+\item pedestrian protection
+\item route missions
+\end{itemize}
+
+\subsection*{Phase 3: Ontology and Reuse}
+
+\begin{itemize}
+\item inheritance
+\item rule libraries
+\item legal profiles
+\item package management
+\end{itemize}
+
+\subsection*{Phase 4: Advanced AI Integration}
+
+\begin{itemize}
+\item semantic compilers
+\item probabilistic entities
+\item risk models
+\item planner interaction
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Recommended Working Group Priorities}
+
+The working group should focus on the following order:
+
+\begin{enumerate}
+
+\item Canonical Runtime State Model
+
+\item Artifact and Package Model
+
+\item Signal Binding Specification
+
+\item Evaluation Semantics
+
+\item Planner Integration Contract
+
+\item Predicate Classification
+
+\item End-to-End Reference Scenario
+
+\item Legal Profiles
+
+\item Ontology Exchange
+
+\item Advanced Probability Extensions
+
+\item Certification Profiles
+
+\end{enumerate}
+
+The first seven topics are likely prerequisites
+for meaningful interoperability between independent VML
+implementations.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+
+The current VML initiative has successfully established
+a strong conceptual foundation.
+
+The next phase must shift focus from language concepts
+toward implementation contracts.
+
+The highest value will likely come from defining:
+
+\begin{enumerate}
+\item the canonical runtime state,
+\item deployment artifacts,
+\item data binding semantics,
+\item executable evaluation semantics,
+\item planner interfaces.
+\end{enumerate}
+
+Once these foundations exist,
+VML can evolve from a formal language proposal
+into a practical interoperable ecosystem.
+The primary objective should therefore be not additional language
+features but a precise definition of how a VML specification
+interacts with real automotive software systems.
+
+\end{document}

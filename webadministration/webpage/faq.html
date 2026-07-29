@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Frequently Asked Questions about Vehicle Machine Language (VML) and the TWG-FAS initiative.">
+  <meta name="keywords" content="VML, FAQ, Vehicle Machine Language, formal verification, automotive AI">
+  <meta property="og:title" content="VML FAQ | TWG-FAS">
+  <meta property="og:description" content="Frequently Asked Questions about Vehicle Machine Language (VML) and the TWG-FAS initiative.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twg-fas.org/faq.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="VML FAQ | TWG-FAS">
+  <meta name="twitter:description" content="Frequently Asked Questions about Vehicle Machine Language (VML) and the TWG-FAS initiative.">
+  <link rel="canonical" href="https://twg-fas.org/faq.html">
+  <title>VML FAQ | TWG-FAS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0a1628;
+      --navy2:  #0f2040;
+      --blue:   #1a3a6b;
+      --accent: #2e6be6;
+      --accent2:#4a9eff;
+      --text:   #e8edf5;
+      --muted:  #8fa3bf;
+      --border: #1e3a5a;
+      --card:   #0d1e38;
+      --white:  #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: radial-gradient(ellipse 80% 60% at 75% 10%, rgba(46,107,230,0.12) 0%, transparent 72%), var(--navy);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,22,40,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    nav .brand {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent2);
+      letter-spacing: 0.02em;
+      text-decoration: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    nav ul a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--white); }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    header {
+      padding: 4.5rem 0 2rem;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      border: 1px solid var(--accent);
+      border-radius: 2px;
+      padding: 0.28rem 0.7rem;
+      margin-bottom: 1.2rem;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 4vw, 2.9rem);
+      line-height: 1.2;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .lead {
+      color: var(--muted);
+      max-width: 760px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.68rem 1.2rem;
+      border-radius: 3px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--white);
+    }
+    .btn-primary:hover { background: #3a7cf5; }
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .content {
+      padding-bottom: 4.5rem;
+    }
+
+    .faq-layout {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 1.4rem;
+      align-items: start;
+    }
+
+    .toc,
+    .faq-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 4.9rem;
+      padding: 1rem;
+    }
+    .toc h2 {
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.8rem;
+    }
+    .toc ul {
+      list-style: none;
+      display: grid;
+      gap: 0.52rem;
+      font-size: 0.84rem;
+    }
+    .toc a {
+      color: var(--muted);
+      text-decoration: none;
+      line-height: 1.35;
+      transition: color 0.2s;
+    }
+    .toc a:hover { color: var(--white); }
+
+    .faq-panel {
+      padding: 1rem;
+    }
+
+    details {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: rgba(10, 22, 40, 0.35);
+      padding: 0.2rem 0.85rem 0.8rem;
+      margin-bottom: 0.8rem;
+      scroll-margin-top: 5.2rem;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1.02rem;
+      padding: 0.72rem 0;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::before {
+      content: "+";
+      color: var(--accent2);
+      font-size: 1.05rem;
+      line-height: 1;
+      width: 0.8rem;
+      flex-shrink: 0;
+      transform: translateY(-1px);
+    }
+
+    details[open] summary::before {
+      content: "-";
+    }
+
+    .answer p {
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .answer p:last-child { margin-bottom: 0; }
+
+    .answer ul {
+      margin: 0.4rem 0 0.95rem 1.2rem;
+      color: var(--muted);
+    }
+
+    .answer blockquote {
+      margin: 0.65rem 0 0.95rem;
+      border-left: 3px solid var(--accent);
+      background: rgba(15, 32, 64, 0.55);
+      padding: 0.75rem 0.95rem;
+      color: var(--text);
+      border-radius: 0 4px 4px 0;
+      font-style: italic;
+    }
+
+    .answer strong { color: var(--text); }
+
+    .refs {
+      margin-top: 0.2rem;
+      font-size: 0.87rem;
+      color: var(--muted);
+    }
+
+    .refs a,
+    .lead a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+
+    .refs a:hover,
+    .lead a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+      padding: 1.6rem 0 2.2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      background: rgba(10, 22, 40, 0.5);
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 920px) {
+      .faq-layout {
+        grid-template-columns: 1fr;
+      }
+      .toc {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 0.8rem 1rem; }
+      .container { padding: 0 1rem; }
+      nav ul { gap: 0.8rem; }
+      nav ul a { font-size: 0.78rem; }
+      summary { font-size: 0.95rem; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "@id": "https://twg-fas.org/faq.html#q1",
+        "name": "What is Vehicle Machine Language (VML)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "VML is an open standard for formal behavioral representation in AI-driven automotive systems. It serves as an intermediate formal language between natural language requirements and runtime execution, enabling transparent, verifiable and certifiable autonomous driving behavior."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="brand">TWG&middot;FAS</a>
+  <ul>
+    <li><a href="index.html#objective">Objective</a></li>
+    <li><a href="index.html#drafts">Drafts</a></li>
+    <li><a href="faq.html" aria-current="page">FAQ</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas" target="_blank" rel="noopener noreferrer">Repo</a></li>
+  </ul>
+</nav>
+
+<header>
+  <div class="container">
+    <span class="tag">Overview Guide</span>
+    <h1>Vehicle Machine Language (VML) FAQ</h1>
+    <p class="lead">
+      This page answers common questions about VML, its role in safety-critical systems,
+      and how it relates to AI-enabled automotive development.
+      For full technical details, see the
+      <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper</a>.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="docs/VML_whitepaper_v0_1.pdf">Read White Paper (PDF)</a>
+      <a class="btn btn-outline" href="index.html">Back to Main Page</a>
+    </div>
+  </div>
+</header>
+
+<main class="content">
+  <div class="container faq-layout">
+    <aside class="toc" aria-label="FAQ table of contents">
+      <h2>Questions</h2>
+      <ul>
+        <li><a href="#q-what-is-vml">What is VML?</a></li>
+        <li><a href="#q-replace-ai">Is VML meant to replace AI?</a></li>
+        <li><a href="#q-why-not-natural-language">Why not simply use natural language?</a></li>
+        <li><a href="#q-llm-generate">Can an LLM generate VML?</a></li>
+        <li><a href="#q-voice-control">Could a vehicle be controlled by voice using VML?</a></li>
+        <li><a href="#q-training">Does VML require training new AI models?</a></li>
+        <li><a href="#q-embedded">Could VML run on embedded devices?</a></li>
+        <li><a href="#q-programming-language">Is VML a programming language?</a></li>
+        <li><a href="#q-file-format">Is VML a file format?</a></li>
+        <li><a href="#q-ltl">Is VML similar to LTL?</a></li>
+        <li><a href="#q-safety">How does VML support safety?</a></li>
+        <li><a href="#q-cost-function">How is VML different from a planner cost function?</a></li>
+        <li><a href="#q-autonomous-only">Is VML intended only for autonomous driving?</a></li>
+        <li><a href="#q-governance">How does VML relate to AI Governance?</a></li>
+        <li><a href="#q-open-standard">Is VML an open standard?</a></li>
+        <li><a href="#q-nonprofit">Why is TWG·FAS organized as an open, non-profit initiative?</a></li>
+      </ul>
+    </aside>
+
+    <section class="faq-panel" aria-label="FAQ entries">
+      <details id="q-what-is-vml" open>
+        <summary>What is VML?</summary>
+        <div class="answer">
+          <p>VML (Vehicle Machine Language) is a proposed formal language for describing vehicle behavior in a way that can be interpreted, verified, tested, monitored, and executed by deterministic systems.</p>
+          <p>Instead of allowing natural language to directly influence safety-critical runtime behavior, VML acts as a formal intermediate representation between human intent and vehicle execution. Foundation models may help create VML specifications, but runtime systems operate only on formally defined VML artifacts.</p>
+          <p class="refs">References: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a>, <a href="index.html">TWG-FAS Index (HTML)</a></p>
+        </div>
+      </details>
+
+      <details id="q-replace-ai">
+        <summary>Is VML meant to replace AI?</summary>
+        <div class="answer">
+          <p><strong>No.</strong></p>
+          <p>VML is not intended to replace AI, machine learning, perception systems, planners, or foundation models.</p>
+          <p>VML aims to provide a formal representation of behavioral intent that can be shared between engineering, planning, verification, simulation, testing, and runtime monitoring. The goal is to standardize the behavior description layer, not the AI implementation itself.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-why-not-natural-language">
+        <summary>Why not simply use natural language?</summary>
+        <div class="answer">
+          <p>Natural language is excellent for communication between humans but problematic for safety-critical runtime systems.</p>
+          <p>A statement such as:</p>
+          <blockquote>"Yield to pedestrians when necessary"</blockquote>
+          <p>leaves many questions unanswered:</p>
+          <ul>
+            <li>What is a pedestrian?</li>
+            <li>What does "necessary" mean?</li>
+            <li>What risk threshold triggers yielding?</li>
+            <li>What happens if yielding is impossible?</li>
+          </ul>
+          <p>VML requires such concepts to be expressed explicitly and formally, making the behavior analyzable and testable.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-llm-generate">
+        <summary>Can an LLM generate VML?</summary>
+        <div class="answer">
+          <p><strong>Yes.</strong></p>
+          <p>A large language model can serve as a semantic compiler that translates natural language requirements, regulations, design intent, or spoken instructions into VML.</p>
+          <p>For example:</p>
+          <blockquote>"Turn left when it is safe"</blockquote>
+          <p>may be transformed into a formal specification involving risk thresholds, traffic participants, and fallback obligations.</p>
+          <p>However, the generated VML is then processed by deterministic components such as parsers, type checkers, monitors, and verification tools. The output can therefore be validated independently of the model that generated it.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-voice-control">
+        <summary>Could a vehicle be controlled by voice using VML?</summary>
+        <div class="answer">
+          <p><strong>Potentially yes.</strong></p>
+          <p>A voice-controlled assistant could translate spoken commands into VML.</p>
+          <p>Example:</p>
+          <p>Driver says:</p>
+          <blockquote>"Park near the entrance but avoid blocking pedestrians."</blockquote>
+          <p>An AI assistant could convert that request into VML constraints and goals.</p>
+          <p>Before execution, the resulting VML would be checked for:</p>
+          <ul>
+            <li>Syntactic correctness</li>
+            <li>Semantic validity</li>
+            <li>Safety rule compliance</li>
+            <li>Conflicts with existing obligations</li>
+          </ul>
+          <p>Only validated VML would be accepted by the runtime system. This differs fundamentally from directly executing natural-language instructions.</p>
+        </div>
+      </details>
+
+      <details id="q-training">
+        <summary>Does VML require training new AI models?</summary>
+        <div class="answer">
+          <p><strong>Not necessarily.</strong></p>
+          <p>Current state-of-the-art language models already demonstrate an ability to understand formal languages and structured specifications.</p>
+          <p>For experimentation and prototyping, large models may be used with only prompt-based explanations of VML.</p>
+          <p>However, specialized models trained or fine-tuned on VML are likely to be:</p>
+          <ul>
+            <li>Smaller</li>
+            <li>Faster</li>
+            <li>Cheaper</li>
+            <li>More reliable</li>
+          </ul>
+          <p>than general-purpose models.</p>
+          <p>VML therefore does not require custom training, but dedicated training may significantly improve efficiency and quality.</p>
+        </div>
+      </details>
+
+      <details id="q-embedded">
+        <summary>Could VML run on embedded devices?</summary>
+        <div class="answer">
+          <p><strong>Potentially yes.</strong></p>
+          <p>One motivation for VML is that understanding unrestricted natural language is computationally expensive. A language model that only needs to translate intent into a constrained formal language can be substantially smaller than a model that must support unrestricted language understanding.</p>
+          <p>The formal runtime components themselves (parsers, monitors, rule engines, and verifiers) can be implemented using classical software techniques.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-programming-language">
+        <summary>Is VML a programming language?</summary>
+        <div class="answer">
+          <p><strong>Not in the traditional sense.</strong></p>
+          <p>VML is better viewed as a behavioral specification language. It focuses on:</p>
+          <ul>
+            <li>Obligations</li>
+            <li>Prohibitions</li>
+            <li>Goals</li>
+            <li>Temporal constraints</li>
+            <li>Safety policies</li>
+            <li>Probabilistic reasoning</li>
+          </ul>
+          <p>It describes what behavior is allowed, required, or forbidden, rather than how algorithms should be implemented.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-file-format">
+        <summary>Is VML a file format?</summary>
+        <div class="answer">
+          <p><strong>No.</strong></p>
+          <p>VML is a language specification, not a file format.</p>
+          <p>The current draft uses a human-readable ASCII syntax for transparency, review, and engineering collaboration. However, VML does not currently prescribe how artifacts must be stored, transported, or exchanged.</p>
+          <p>The standard focuses on semantics and language constructs, while implementations may choose different containers or encodings as long as the normative meaning is preserved.</p>
+          <p><strong>Design principle:</strong> Container neutrality.</p>
+          <p><strong>In short:</strong> VML defines meaning, not storage.</p>
+        </div>
+      </details>
+
+      <details id="q-ltl">
+        <summary>Is VML similar to LTL (Linear Temporal Logic)?</summary>
+        <div class="answer">
+          <p>VML builds upon ideas found in formal methods, including temporal logic, deontic logic, ontologies, probabilistic reasoning, and runtime verification.</p>
+          <p>However, VML is intended as an engineering language for real automotive systems rather than as a pure academic logic formalism. Its goal is to integrate multiple behavioral concerns into a single practical representation.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-safety">
+        <summary>How does VML support safety?</summary>
+        <div class="answer">
+          <p>VML introduces deterministic semantics, explicit rules, monitor semantics, type checking, and verification interfaces.</p>
+          <p>A VML specification can be:</p>
+          <ul>
+            <li>Inspected by engineers</li>
+            <li>Reviewed by auditors</li>
+            <li>Analyzed by formal tools</li>
+            <li>Monitored during runtime</li>
+            <li>Tested in simulation</li>
+          </ul>
+          <p>This makes behavioral intent transparent and traceable.</p>
+          <p class="refs">References: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a>, <a href="index.html">TWG-FAS Index (HTML)</a></p>
+        </div>
+      </details>
+
+      <details id="q-cost-function">
+        <summary>How is VML different from a planner cost function?</summary>
+        <div class="answer">
+          <p>Traditional planners often encode many decisions inside large cost functions. This can make behavior difficult to interpret.</p>
+          <p>VML separates:</p>
+          <ul>
+            <li>Hard constraints</li>
+            <li>Obligations</li>
+            <li>Prohibitions</li>
+            <li>Goals</li>
+            <li>Optimization objectives</li>
+          </ul>
+          <p>This allows behavior to be expressed explicitly while still supporting optimization-based planning.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-autonomous-only">
+        <summary>Is VML intended only for autonomous driving?</summary>
+        <div class="answer">
+          <p><strong>No.</strong></p>
+          <p>While autonomous driving is a primary motivation, VML could potentially be applied to:</p>
+          <ul>
+            <li>Advanced Driver Assistance Systems (ADAS)</li>
+            <li>Automated parking</li>
+            <li>Robotics</li>
+            <li>Industrial automation</li>
+            <li>Autonomous logistics systems</li>
+            <li>Other safety-critical autonomous platforms</li>
+          </ul>
+          <p>The central concept is domain-independent: a formal representation of behavioral intent.</p>
+        </div>
+      </details>
+
+      <details id="q-governance">
+        <summary>How does VML relate to AI Governance?</summary>
+        <div class="answer">
+          <p>VML does not govern AI models themselves. Instead, it provides a transparent and inspectable description of behavioral intent.</p>
+          <p>This separation may help:</p>
+          <ul>
+            <li>Safety assessments</li>
+            <li>Regulatory reviews</li>
+            <li>Compliance processes</li>
+            <li>Traceability requirements</li>
+            <li>Certification activities</li>
+          </ul>
+          <p>A governance framework can review the behavioral specification independently of the underlying AI implementation.</p>
+          <p class="refs">Reference: <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-open-standard">
+        <summary>Is VML an open standard?</summary>
+        <div class="answer">
+          <p><strong>That is the intention.</strong></p>
+          <p>The TWG-FAS initiative proposes a vendor-neutral, openly developed standard, allowing multiple independent implementations and avoiding lock-in to any specific AI architecture, vendor, or vehicle platform.</p>
+          <p class="refs">References: <a href="index.html">TWG-FAS Index (HTML)</a>, <a href="docs/VML_whitepaper_v0_1.pdf">VML White Paper (PDF)</a></p>
+        </div>
+      </details>
+
+      <details id="q-nonprofit">
+        <summary>Why is TWG·FAS organized as an open, non-profit initiative?</summary>
+        <div class="answer">
+          <p>TWG·FAS believes that the formal specification of behavior in safety-critical autonomous systems should not be controlled by a single company, vendor, or proprietary ecosystem.</p>
+          <p>A proprietary behavioral standard would create natural barriers to adoption. Automotive manufacturers, suppliers, tool vendors, researchers, regulators, and certification bodies are unlikely to build long-term safety processes around a language controlled by a single commercial entity. Broad adoption requires a vendor-neutral foundation that all stakeholders can trust.</p>
+          <p>More importantly, autonomous driving systems raise questions that extend beyond commercial interests. Society, regulators, and certification authorities must be able to understand and evaluate the behavioral logic that governs vehicle decisions. An open standard allows behavioral intent, safety policies, and verification artifacts to be reviewed independently, without requiring companies to disclose proprietary algorithms, model architectures, training data, or intellectual property.</p>
+          <p>This separation is fundamental. Companies should be able to protect their innovations while still providing transparent evidence of how safety-critical behavior is specified, verified, and monitored.</p>
+          <p>TWG·FAS therefore views openness not only as an engineering choice but as an ethical responsibility. A common, openly governed standard can promote transparency, independent verification, regulatory cooperation, scientific research, and public trust. By enabling scrutiny of behavioral specifications while preserving legitimate intellectual property, the initiative aims to support the safe and responsible development of future autonomous systems.</p>
+          <p>In this sense, openness is not merely a governance model—it is a contribution to safety, accountability, and the public good.</p>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="container footer-row">
+    <span>&copy; 2026 Technical Working Group for Formal Automotive Systems.</span>
+    <span><a href="index.html" style="color:var(--accent2);text-decoration:none;">Back to main page</a></span>
+  </div>
+</footer>
+</body>
+</html>

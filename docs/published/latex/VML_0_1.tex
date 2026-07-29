@@ -1,0 +1,637 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\geometry{margin=2.4cm}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  morekeywords={
+    ALWAYS,EVENTUALLY,NEXT,UNTIL,GOAL,OBLIGATORY,PERMITTED,PROHIBITED,
+    REQUIRE,WHEN,OTHERWISE,AND,OR,NOT,IMPLIES,CLASS,ISA,HAS,
+    OPTIMIZE,PRIORITY,MINIMIZE,MAXIMIZE,ASSUME,TRUE,FALSE
+  }
+}
+
+\title{\textbf{Vehicle Machine Language (VML)}\\\large Formal Specification Draft Version 0.1}
+\author{Working Draft}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+\begin{center}
+\textbf{Origin:} https://twg-fas.org
+\end{center}
+
+\begin{abstract}
+Vehicle Machine Language (VML) is a machine-native behavioral language for autonomous vehicles and advanced driver assistance systems. The central premise is that natural language belongs to design time, not runtime. Human requirements are authored in natural language and translated into VML, while runtime systems execute and verify only VML.
+
+This version 0.1 resets numbering and consolidates prior drafts into a single implementation-oriented specification. It preserves the strongest ideas from earlier iterations, removes duplicated concepts, and restructures the layered model with explicit syntax, static checks, operational semantics, and reference examples. The goal is practical: a reader should be able to implement a parser, type checker, monitor, and a planner interface from this document.
+\end{abstract}
+
+\section{Why VML Exists}
+Natural language is powerful for people but problematic for machine execution in safety-critical systems. It is ambiguous, context dependent, and open-world by design. Runtime safety logic requires deterministic interpretation, traceability, and formal verification.
+
+The VML pipeline is therefore:
+\[
+\text{Natural Language Requirements}
+\rightarrow
+\text{Semantic Compiler (human + AI tooling)}
+\rightarrow
+\text{VML}
+\rightarrow
+\text{Runtime Verification and Planning}
+\]
+
+\noindent AI models may assist translation and review at design time, but no safety-critical runtime decision depends on natural-language interpretation.
+
+\section{Design Principles}
+VML is founded on the following core principles:
+
+\begin{enumerate}
+    \item \textbf{No Runtime Natural Language:} Safety-critical decisions shall never depend on the interpretation of natural language.
+    \item \textbf{Explicit \& Unambiguous Semantics:} Every VML statement must have one and only one interpretation.
+    \item \textbf{Formal Verifiability:} Every VML specification must be suitable for formal analysis and automated machine checking.
+    \item \textbf{Composability:} Complex behaviors shall be constructed from the combination of simpler, primitive behaviors.
+    \item \textbf{Human Readability:} While machine-oriented, VML must remain understandable to engineers to facilitate authoring, review, and debugging.
+    \item \textbf{Technology Independence:} VML semantics shall not depend on any specific perception system, planning algorithm, or neural network architecture.
+\end{enumerate}
+
+\section{Conformance Levels}
+VML 0.1 defines two profiles:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Core Profile (required for 0.1 conformance):} logic, temporal operators, metric comparisons, goals, obligations, and monitor semantics.
+  \item \textbf{Extended Profile (optional in 0.1):} probabilistic expressions, ontology declarations, utility optimization objectives, contrary-to-duty deontics, and assumptions.
+\end{itemize}
+
+\section{System Model}
+\subsection{Execution Trace}
+A run is a discrete state trace
+\[
+\sigma = S_0, S_1, S_2, \dots
+\]
+with sample period $\Delta t > 0$ (fixed or piecewise fixed by implementation configuration).
+
+\subsection{State Shape}
+Each state $S_k$ contains:
+\begin{itemize}[leftmargin=*]
+  \item Boolean atoms (facts), for example \texttt{Collision = FALSE}.
+  \item Numeric variables, for example \texttt{Ego.Velocity = 7.3}.
+  \item Optional probability fields, for example \texttt{P(IsPedestrian(Obj1)) = 0.92}.
+  \item Optional symbolic class memberships, for example \texttt{Obj1 ISA Pedestrian}.
+\end{itemize}
+
+\section{Layered Language Model}
+VML is structured as a composition of logical layers, where each layer addresses a fundamental aspect of the driving task. This unified model integrates the core requirements of autonomous behavior into a single representation.
+\[
+VML = L \oplus T \oplus M \oplus P \oplus G \oplus D \oplus O \oplus U
+\]
+where layers are integrated but can be implemented incrementally.
+
+\begin{longtable}{@{}lll@{}}
+\toprule
+\textbf{Layer} & \textbf{Name} & \textbf{Question} \\
+\midrule
+$L$ & Logical (Predicate Logic) & What facts hold? What exists and what is true? \\
+$T$ & Temporal Logic (LTL) & When must it happen?  When must they hold? \\
+$M$ & Metric & Arithmetic Constraints: How much? (e.g., distance, velocity)  What numeric bounds apply? \\
+$P$ & Probabilistic (optional) & How certain is perception/state?  How certain are we?\\
+$G$ & Goal (Planning Objectives) & What do we desire to achieve?  What future states are desired? \\
+$D$ & Deontic & What is obligatory, permitted, forbidden? \\
+$O$ & Ontology (optional) & What classes and inheritance apply? \\
+$U$ & Utility (optional) & How are soft objectives ranked? \\
+\bottomrule
+\end{longtable}
+
+\section{Concrete Syntax (EBNF)}
+The following grammar is normative for parser behavior in 0.1.
+
+\begin{lstlisting}
+program           ::= declaration* statement*
+
+declaration       ::= class_decl | binding_decl
+class_decl        ::= "CLASS" IDENT "ISA" IDENT ("HAS" "{" attr_list "}")? ";"
+attr_list         ::= attr ("," attr)*
+attr              ::= IDENT ":" TYPE
+binding_decl      ::= IDENT "=" literal ";"
+
+statement         ::= goal_stmt
+                    | hard_rule
+                    | deontic_stmt
+                    | require_stmt
+                    | optimize_stmt
+                    | assume_stmt
+
+goal_stmt          ::= "GOAL" expr ";"
+
+hard_rule          ::= "ALWAYS" expr ";"
+                    | "EVENTUALLY" expr ";"
+                    | "NEXT" expr ";"
+                    | expr "UNTIL" expr ";"
+                    | expr ";"
+
+require_stmt       ::= "REQUIRE" "(" expr ")" "IMPLIES" statement
+
+optimize_stmt      ::= "OPTIMIZE" "PRIORITY" "(" INT ")"
+                       ("MINIMIZE"|"MAXIMIZE") expr ";"
+
+assume_stmt        ::= "ASSUME" expr ";"
+
+deontic_stmt       ::= deontic_op expr ("WHEN" expr)?
+                       ("OTHERWISE" deontic_stmt)? ";"
+deontic_op         ::= "OBLIGATORY" | "PERMITTED" | "PROHIBITED"
+
+expr               ::= impl_expr
+impl_expr          ::= or_expr ("IMPLIES" or_expr)*
+or_expr            ::= and_expr ("OR" and_expr)*
+and_expr           ::= unary_expr ("AND" unary_expr)*
+unary_expr         ::= "NOT" unary_expr
+                    | temporal_expr
+
+temporal_expr      ::= "ALWAYS" unary_expr
+                    | "EVENTUALLY" unary_expr
+                    | "NEXT" unary_expr
+                    | primary_expr ("UNTIL" primary_expr)?
+
+primary_expr       ::= "(" expr ")"
+                    | predicate
+                    | comparison
+                    | prob_expr
+                    | isa_expr
+
+predicate          ::= IDENT ("(" arg_list ")")?
+arg_list           ::= expr ("," expr)*
+comparison         ::= value comparator value
+comparator         ::= "<" | "<=" | "=" | ">=" | ">"
+value              ::= IDENT | NUMBER | STRING | BOOLEAN
+isa_expr           ::= IDENT "ISA" IDENT
+
+prob_expr          ::= "P" "(" expr ")"
+                    | "EXPECTED" "(" expr ")"
+                    | "CDF" "(" expr ")"
+                    | "EXPECTED_RISK" "(" arg_list ")"
+
+literal            ::= NUMBER | STRING | BOOLEAN
+TYPE               ::= "BOOLEAN" | "REAL" | "INT" | "STRING"
+IDENT              ::= /[A-Za-z_][A-Za-z0-9_.]*/
+NUMBER             ::= /-?[0-9]+(\.[0-9]+)?/
+STRING             ::= /"([^"\\]|\\.)*"/
+BOOLEAN            ::= "TRUE" | "FALSE"
+INT                ::= /[0-9]+/
+\end{lstlisting}
+
+\section{Static Semantics (Type and Consistency Rules)}
+An implementation must reject programs that violate these checks.
+
+\subsection{Core checks}
+\begin{enumerate}[leftmargin=*]
+  \item Every referenced identifier has a declaration source (state schema, binding, or class member).
+  \item Boolean operators consume Boolean subexpressions.
+  \item Numeric comparators consume numeric terms.
+  \item \texttt{UNTIL} has Boolean left and right operands.
+  \item \texttt{GOAL} expression is Boolean.
+  \item Deontic content (for \texttt{OBLIGATORY}/\texttt{PROHIBITED}/\texttt{PERMITTED}) is Boolean.
+\end{enumerate}
+
+\subsection{Optional checks}
+\begin{enumerate}[leftmargin=*]
+  \item \texttt{P(...)} and \texttt{CDF(...)} evaluate to values in $[0,1]$.
+  \item \texttt{PRIORITY(n)} uses positive integer levels; duplicate level declarations are allowed and form a set at that level.
+  \item \texttt{ISA} relations are acyclic.
+\end{enumerate}
+
+\section{Dynamic Semantics}
+\subsection{Boolean and Temporal Semantics}
+Let $\sigma,k \models \varphi$ mean formula $\varphi$ holds at state index $k$.
+
+\begin{align*}
+\sigma,k \models \texttt{NOT }\varphi &\iff \neg(\sigma,k \models \varphi) \\
+\sigma,k \models \varphi \texttt{ AND }\psi &\iff (\sigma,k \models \varphi) \land (\sigma,k \models \psi) \\
+\sigma,k \models \varphi \texttt{ OR }\psi &\iff (\sigma,k \models \varphi) \lor (\sigma,k \models \psi) \\
+\sigma,k \models \varphi \texttt{ IMPLIES }\psi &\iff \neg(\sigma,k \models \varphi) \lor (\sigma,k \models \psi) \\
+\sigma,k \models \texttt{NEXT }\varphi &\iff \sigma,k+1 \models \varphi \\
+\sigma,k \models \texttt{ALWAYS }\varphi &\iff \forall j\geq k:\ \sigma,j \models \varphi \\
+\sigma,k \models \texttt{EVENTUALLY }\varphi &\iff \exists j\geq k:\ \sigma,j \models \varphi \\
+\sigma,k \models \varphi\ \texttt{UNTIL}\ \psi &\iff \exists j\geq k:\ \sigma,j \models \psi\ \land\ \forall i\in[k,j):\sigma,i\models\varphi
+\end{align*}
+
+\subsection{Deontic Semantics in 0.1}
+For monitor semantics:
+\begin{itemize}[leftmargin=*]
+  \item \texttt{OBLIGATORY e}: violation when $e$ is false in a state where it applies.
+  \item \texttt{PROHIBITED e}: violation when $e$ is true in a state where it applies.
+  \item \texttt{PERMITTED e}: no direct violation; used as policy metadata and planner tie-break signal.
+\end{itemize}
+A \texttt{WHEN c} guard limits applicability to states where $c$ is true.
+
+\subsection{Contrary-to-Duty (optional)}
+For
+\begin{lstlisting}
+OBLIGATORY a OTHERWISE OBLIGATORY b;
+\end{lstlisting}
+if $a$ is violated in an applicable state, then obligation $b$ becomes active immediately in the same state and remains active until satisfied or superseded by implementation policy.
+
+\subsection{Probabilistic Functions (optional)}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{P(phi)} evaluates to confidence estimate that proposition $\phi$ is true in the current state.
+  \item \texttt{EXPECTED(x)} returns $\mathbb{E}[x]$ from the estimator distribution.
+  \item \texttt{CDF(x < c)} returns $\Pr(x < c)$.
+  \item \texttt{EXPECTED\_RISK(...)} returns expected weighted harm over modeled outcomes.
+\end{itemize}
+An implementation must document estimator source and update frequency for these values.
+
+\section{Layer-by-Layer Implementation Guidance}
+\subsection{L: Logical Layer}
+\textbf{Purpose:} define the vocabulary of facts and relations.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item Maintain symbol table for atoms and predicates.
+  \item Map sensor/perception/planner outputs to canonical atom updates.
+  \item Use stable naming conventions (for example \texttt{Ego.Velocity}, \texttt{Obj12.IsPedestrian}).
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+PedestrianInCrosswalk;
+InLane(Ego, Lane_2);
+\end{lstlisting}
+
+\subsection{T: Temporal Layer}
+\textbf{Purpose:} encode persistence, liveness, and ordered behavior.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item Compile each temporal formula to a monitor automaton or progression state.
+  \item For online monitoring, maintain per-formula runtime memory (for open obligations and pending eventualities).
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+ALWAYS (NOT Collision);
+Braking UNTIL CrossingClear;
+\end{lstlisting}
+
+\subsection{M: Metric Layer}
+\textbf{Purpose:} encode numeric safety envelopes and dynamic limits.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item Normalize units at ingestion (for example SI base units).
+  \item Evaluate comparisons after unit conversion and signal validity checks.
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+ALWAYS (DistanceToPedestrian > 2.0);
+ALWAYS (Ego.LateralAcceleration < 2.5);
+\end{lstlisting}
+
+\subsection{P: Probabilistic Layer (optional)}
+\textbf{Purpose:} preserve uncertainty into decision logic instead of premature hard thresholding.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item Bind probability functions to estimator APIs.
+  \item Set deterministic fallback when probabilistic source is missing (for example fail-safe low speed policy).
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+REQUIRE (P(IsPedestrian(Obj1)) > 0.95)
+IMPLIES OBLIGATORY (Ego.Velocity = 0);
+\end{lstlisting}
+
+\subsubsection{Probabilistic Representation: Bridging the Perception-Planning Gap ($\mathcal{P}$)}
+
+Perception systems (cameras, radar, LiDAR processed through neural networks) output probabilistic classifications and spatial coordinate state estimations containing sensor noise and epistemic uncertainty. Converting these continuous probability distributions into arbitrary binary decisions before path planning (e.g., "there is 51\% probability of a pedestrian, so I must act as if there is 100\% or 0\% probability") leads to either dangerous planning gaps or overly conservative, jerky driving behavior (such as "phantom braking").
+
+VML formally bridges this perception-planning gap by representing world entities as \textbf{stochastic states} and introducing operators that reason directly over probability density functions (PDFs), cumulative distribution functions (CDFs), and mathematical expectations.
+
+\subsubsection{Formal Probabilistic Attributes}
+Every dynamic entity $e$ tracked by the system has an associated probabilistic state vector. VML 0.4 allows direct query access to these statistical properties:
+\begin{itemize}
+    \item $P(e \text{ ISA } C)$: The categorical probability that entity $e$ belongs to class $C$ (e.g., $P(\text{Obstacle}_1 \text{ ISA } \text{Pedestrian}) = 0.88$).
+    \item $e.\mathbf{X} \sim \mathcal{N}(\mu, \Sigma)$: The spatial state vector representing position, velocity, and heading, modeled as a probability distribution (e.g., Gaussian or Gaussian Mixture Model).
+\end{itemize}
+
+\subsection{Advanced Statistical Operators}
+To express policies in safety-critical probabilistic terms, VML 0.4 introduces three key operators:
+
+\begin{enumerate}
+    \item \texttt{EXPECTED[f(x)]}: Calculates the mathematical expectation $\mathbb{E}[f(x)] = \int f(x) p(x) dx$.
+    \item \texttt{CDF(Variable < Limit)}: Calculates the cumulative probability $P(\text{Variable} < \text{Limit})$.
+    \item \texttt{EXPECTED\_RISK(Collision)}: Computes the deontic risk, defined as:
+    \[
+    \mathcal{R}(\text{Collision}) = \sum_{c \in \text{Classes}} P(e \text{ ISA } c) \times \int_{\Omega_{\text{col}}} p(\mathbf{x}_{\text{ego}}) \cdot p(\mathbf{x}_e \mid c) \, d\mathbf{x} \times \text{Severity}(c)
+    \]
+    where $\text{Severity}(c)$ is a parameterized ethical severity metric (e.g., $\text{Severity}(\text{Pedestrian}) = 1.0$, whereas $\text{Severity}(\text{CardboardBox}) = 0.001$).
+\end{enumerate}
+
+\subsubsection{Stochastic Rules Syntax}
+This allows us to write elegant, deterministic threshold rules over stochastic states:
+
+\begin{lstlisting}
+-- Stop rule based on collision probability and entity class severity
+ALWAYS REQUIRE (EXPECTED_RISK(Collision, Ego, Obstacle_1) > 10^-5)
+IMPLIES 
+  OBLIGATORY (Ego.Velocity = 0 UNTIL EXPECTED_RISK(Collision, Ego, Obstacle_1) <= 10^-6);
+
+-- Speed adjustment based on confidence of lane boundaries
+ALWAYS REQUIRE (CDF(DistanceTo(Ego, LeftLaneBoundary) < 0.2) > 0.05)
+IMPLIES
+  OBLIGATORY (Ego.Velocity < 10.0);
+\end{lstlisting}
+
+\subsection{G: Goal Layer}
+\textbf{Purpose:} express desired outcomes that are pursued while respecting hard constraints.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item Keep goal status machine: inactive, active, reached, blocked.
+  \item Do not allow goal pursuit to override hard safety violations.
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+GOAL At(Ego, Destination);
+\end{lstlisting}
+
+\subsection{D: Deontic Layer}
+\textbf{Purpose:} encode obligations, permissions, prohibitions, and fallback duties.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item Evaluate applicability via \texttt{WHEN} guard.
+  \item Emit structured violation records with timestamp, rule id, and witness signals.
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+OBLIGATORY YieldToPedestrian WHEN PedestrianInCrosswalk;
+PROHIBITED CrossSolidLane;
+\end{lstlisting}
+
+In autonomous driving, critical situations occur where primary safety obligations cannot be fulfilled without violating another rule (for example, stepping over a double yellow line is prohibited, but it is necessary to bypass a broken-down vehicle blocking the lane). Traditional modal logic fails in these scenarios due to logical contradictions.
+
+VML resolves this by utilizing \textbf{Contrary-to-Duty (CTD) logic}, which formalizes sub-ideal obligations. If a primary obligation $O(\alpha)$ is violated (or is physically impossible to meet), a secondary conditional obligation $O(\beta \mid \neg \alpha)$ is triggered. This provides a formal basis for the design of \textbf{Minimal Risk Maneuvers (MRM)}.
+
+Mathematical syntax:
+\[
+\mathbf{OBLIGATORY} \, \alpha \, \mathbf{OTHERWISE} \, \mathbf{OBLIGATORY} \, \beta
+\]
+
+\begin{lstlisting}
+-- Primary: Avoid collision while staying in lane.
+-- Secondary (CTD): If a collision is physically unavoidable within current lane, 
+-- steer into empty shoulder (violating lane rules) to avoid high-severity collision.
+ALWAYS OBLIGATORY (
+  ALWAYS NOT (Ego.IsInCollision) AND ALWAYS (Ego.Lane = CurrentLane)
+)
+OTHERWISE OBLIGATORY (
+  Ego.Maneuver = MinimalRiskManeuver AND Ego.TargetLocation = SafeShoulder
+);
+\end{lstlisting}
+
+\subsubsection{Spatial-Topological Logic}
+Relying strictly on continuous, absolute coordinate mathematics in rule specifications is highly brittle. VML introduces qualitative spatial reasoning using a formal topological logic inspired by Region Connection Calculus (RCC-8).
+
+We define standard spatial topological predicates over two-dimensional spatial regions of entities:
+
+\begin{itemize}
+    \item \texttt{Spatial.DC(A, B)}: Disconnected (A and B do not touch).
+    \item \texttt{Spatial.EC(A, B)}: Externally Connected (A and B touch only at their boundaries).
+    \item \texttt{Spatial.PO(A, B)}: Partial Overlap (A and B share interior points).
+    \item \texttt{Spatial.TPP(A, B)}: Tangential Proper Part (A is completely inside B, touching its boundary).
+\end{itemize}
+
+\begin{lstlisting}
+-- Formalizing safe keeping using topological relations
+ALWAYS PROHIBITED (Spatial.PO(Ego.BoundingBox, Vehicle_1.SafetyEnvelope));
+\end{lstlisting}
+
+\subsubsection{Multi-Agent Game-Theoretic Assumptions}
+Safety guarantees depend on how we assume other agents will behave. Overly optimistic assumptions (such as "other drivers will always obey stop signs") are unsafe, while overly pessimistic assumptions (such as "other drivers may accelerate into me at any second") lead to vehicle freezing.
+
+VML formalizes these interaction models via conditional \texttt{ASSUME} statements, defining game-theoretic boundaries of cooperation:
+
+\begin{lstlisting}
+-- Assume cooperative play under bounded rationality
+ASSUME ALWAYS (EXPECTED_RISK(Collision, OtherVehicle, ego) < 10^-2)
+IMPLIES
+  ALWAYS OBLIGATORY (MaintainSmoothTrajectory(Ego));
+\end{lstlisting}
+
+\subsection{O: Ontology Layer (optional)}
+\textbf{Purpose:} reduce rule duplication by class inheritance.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item Build directed acyclic class graph.
+  \item Expand class-targeted rules to instance-level obligations at runtime.
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+CLASS VulnerableRoadUser ISA DynamicObstacle;
+CLASS Pedestrian ISA VulnerableRoadUser;
+OBLIGATORY YieldTo(target) WHEN (target ISA VulnerableRoadUser);
+\end{lstlisting}
+
+To prevent VML files from becoming bloated with repetitive rules for every possible object type, VML integrates a formal taxonomic \textbf{Ontology Layer ($\mathcal{O}$)}. This layer is formalized using Description Logic (DL) and supports semantic subclass inheritance and property attribution.
+
+\subsubsection{The Driving Taxonomy Hierarchy}
+We define a standardized hierarchical structure for the road ecosystem:
+
+\[
+\text{Entity} \sqsubseteq \text{StaticObstacle} \sqcup \text{DynamicObstacle} \sqcup \text{Infrastructure}
+\]
+\[
+\text{DynamicObstacle} \sqsubseteq \text{Vehicle} \sqcup \text{VulnerableRoadUser (VRU)}
+\]
+\[
+\text{VRU} \sqsubseteq \text{Pedestrian} \sqcup \text{Cyclist} \sqcup \text{Animal}
+\]
+\[
+\text{Vehicle} \sqsubseteq \text{StandardVehicle} \sqcup \text{EmergencyVehicle}
+\]
+
+\subsubsection{Ontological Axioms in VML}
+VML specifications can define taxonomic classes and relations directly, using the \texttt{ISA} and \texttt{HAS} syntax:
+
+\begin{lstlisting}
+-- Ontological Definitions
+CLASS VulnerableRoadUser ISA DynamicObstacle;
+CLASS Pedestrian ISA VulnerableRoadUser;
+CLASS Cyclist ISA VulnerableRoadUser;
+CLASS EmergencyVehicle ISA Vehicle HAS { SirensActive: BOOLEAN, PriorityRightOfWay: BOOLEAN };
+
+-- Generic Deontic Rule written for VulnerableRoadUsers
+ALWAYS OBLIGATORY (YieldTo(Ego, target)) WHEN (target ISA VulnerableRoadUser AND Spatial.Overlap(target.SafetyZone, Ego.Path));
+\end{lstlisting}
+
+\textbf{Behavioral Inheritance Benefit:} Because \texttt{Pedestrian ISA VulnerableRoadUser} is declared in the ontology, any dynamic entity detected as a \texttt{Pedestrian} automatically inherits the yield obligation rule without requiring additional code. This significantly simplifies verification and decreases the semantic compile size.
+
+\subsection{U: Utility Layer (optional) - Optimization Objectives}
+
+\textbf{Purpose:} represent soft objectives under strict priority ordering.
+
+\textbf{Implementation:}
+\begin{itemize}[leftmargin=*]
+  \item First enforce all hard constraints.
+  \item Then optimize lexicographically by ascending priority number.
+\end{itemize}
+
+Autonomous driving is inherently a multi-objective optimization problem. An autonomous vehicle must simultaneously balance safety, regulatory compliance, passenger comfort, and operational progress. Standard temporal logics treat all constraints as binary (either fully satisfied or violated), which is highly impractical for real-world trajectory generation.
+
+To resolve this, VML introduces the \textbf{Utility Layer ($\mathcal{U}$)}, enabling the specification of soft constraints and mathematical optimization objectives alongside hard temporal requirements.
+
+\subsubsection{Lexicographical Priority Levels}
+Instead of relying on arbitrary scalar weights in a monolithic cost function—which often leads to fragile and unverifiable edge-case behaviors—VML defines optimization objectives using strict \textbf{Lexicographical Priority Levels}. 
+
+A higher-priority level constraint can never be compromised to satisfy a lower-priority objective. If multiple trajectories satisfy the higher-priority constraints equally, the lower-priority objectives are evaluated to break the tie.
+
+\subsubsection{Syntax and Mathematical Formulation}
+Let $J_i(x, u)$ be a continuous cost function mapping states $x$ and control inputs $u$ to a real-valued cost over a planning horizon $H$. The optimization objective is declared using the following syntax:
+
+\begin{lstlisting}
+OPTIMIZE PRIORITY(1) MINIMIZE EXPECTED_RISK(Collision);
+OPTIMIZE PRIORITY(2) MINIMIZE Ego.LateralJerk + Ego.LongitudinalJerk; -- Passenger Comfort
+OPTIMIZE PRIORITY(3) MAXIMIZE Ego.Velocity;                           -- Progress
+\end{lstlisting}
+
+Mathematically, the trajectory generator solves:
+\[
+\min_{u \in \mathcal{U}} \left( J_1(x,u), J_2(x,u), \dots, J_n(x,u) \right) \quad \text{subject to } \Phi_{\text{hard}} \models \text{True}
+\]
+where $\Phi_{\text{hard}}$ is the set of hard physical and safety temporal constraints (e.g., stopping at red lights).
+
+
+\textbf{Example:}
+\begin{lstlisting}
+OPTIMIZE PRIORITY(1) MINIMIZE EXPECTED_RISK(Collision);
+OPTIMIZE PRIORITY(2) MINIMIZE Ego.LateralJerk + Ego.LongitudinalJerk;
+OPTIMIZE PRIORITY(3) MAXIMIZE Ego.Velocity;
+\end{lstlisting}
+
+\section{Reference Execution Pipeline}
+A minimal 0.1 implementation is:
+\[
+\text{Lexer} \rightarrow \text{Parser} \rightarrow \text{AST} \rightarrow \text{Type Checker} \rightarrow \text{Rule Engine/Monitor}
+\]
+
+A planner-integrated implementation is:
+\[
+\text{Perception State} \rightarrow \text{VML Evaluator} \rightarrow \text{Constraint Filter} \rightarrow \text{Trajectory Optimizer} \rightarrow \text{Controller}
+\]
+
+\subsection{Online monitor loop}
+\begin{lstlisting}
+for each incoming state S_k:
+  update atom table and numeric store
+  evaluate guards and activate applicable deontic rules
+  progress temporal monitors
+  evaluate hard constraints and record violations
+  update goals and optimization context
+  publish verdict/event stream
+\end{lstlisting}
+
+\section{Normative Runtime Outputs}
+A conforming runtime monitor must expose at least:
+\begin{itemize}[leftmargin=*]
+  \item \texttt{rule\_id}
+  \item \texttt{timestamp} (state index and wall time if available)
+  \item \texttt{status} in \{satisfied, violated, pending\}
+  \item \texttt{evidence} (minimal set of signal values used in decision)
+\end{itemize}
+
+\section{Unified Complex Use-Case Scenario: Unprotected Left Turn}
+
+To demonstrate the expressive power of VML 0.4, we formalize a highly complex scenario: an **Unprotected Left Turn across oncoming traffic with high-uncertainty pedestrian presence on the crosswalk**.
+
+\begin{lstlisting}
+-- Unprotected Left Turn VML Specification (Version 0.4)
+
+-- 1. Ontological Mapping
+CLASS OncomingVehicle ISA Vehicle;
+CLASS CrosswalkPedestrian ISA Pedestrian;
+
+-- 2. Utility Layer Optimization Goals
+OPTIMIZE PRIORITY(1) MINIMIZE EXPECTED_RISK(Collision);
+OPTIMIZE PRIORITY(2) MINIMIZE Ego.LateralJerk;  -- Comfort
+OPTIMIZE PRIORITY(3) MAXIMIZE Ego.Velocity;     -- Flow
+
+-- 3. Behavioral Rules
+-- Rule A: Hard obligation to stop for pedestrian if risk is high
+ALWAYS REQUIRE (EXPECTED_RISK(Collision, Ego, target) > 10^-5 AND target ISA Pedestrian)
+IMPLIES
+  OBLIGATORY (Ego.Velocity = 0.0)
+  OTHERWISE OBLIGATORY (
+    Ego.Maneuver = SafeBrakingToShoulder  -- CTD Fallback if stop fails
+  );
+
+-- Rule B: Execute unprotected left turn only when gaps are statistically safe
+ALWAYS OBLIGATORY (
+  Ego.Maneuver = ExecuteLeftTurn
+) 
+WHEN (
+  EXPECTED_RISK(Collision, Ego, OncomingVehicle) < 10^-6 AND 
+  CDF(OncomingVehicle.Velocity > 25.0) < 0.02
+)
+OTHERWISE OBLIGATORY (
+  Ego.Velocity = 0.0 AND Ego.Maneuver = YieldAtIntersection
+);
+
+-- Rule C: Respect spatial safety boundaries topologically
+ALWAYS PROHIBITED (
+  Spatial.PO(Ego.BoundingBox, Crosswalk.Boundary) 
+) WHEN (
+  EXPECTED_RISK(Collision, Ego, target) > 10^-6 AND target ISA VulnerableRoadUser
+);
+\end{lstlisting}
+
+\section{Natural Language to VML Translation Workflow}
+Recommended process:
+\begin{enumerate}[leftmargin=*]
+  \item Parse requirement sentence into actor, condition, action, and timing.
+  \item Map domain terms to canonical ontology symbols.
+  \item Select hard constraints versus goals.
+  \item Introduce numeric thresholds and units explicitly.
+  \item Add fallback deontic obligations for infeasible primary duties.
+  \item Run type checks and simulation traces; revise until stable.
+\end{enumerate}
+
+\section{What Is Intentionally Out of Scope in 0.1}
+\begin{itemize}[leftmargin=*]
+  \item Full denotational semantics for every probabilistic operator variant.
+  \item Standardized ontology exchange format between organizations.
+  \item Certification argument templates.
+  \item Code generation for any specific vehicle platform.
+\end{itemize}
+
+\section{Conclusion}
+VML 0.1 defines a practical formal foundation: natural language at design time, formal language at runtime. The specification is immediately implementable as a parser and monitor and extensible toward probabilistic planning, ontology-based reasoning, and lexicographic multi-objective optimization.
+
+\[
+\text{Natural Language} \neq \text{Runtime Language}
+\]
+
+\[
+\text{Natural Language} \rightarrow \text{VML} \rightarrow \text{Safe Executable Behavior}
+\]
+
+\end{document}

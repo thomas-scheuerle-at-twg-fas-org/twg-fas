@@ -1,0 +1,69 @@
+/* TEAM & ACKNOWLEDGMENTS */
+
+Technical Working Group for Formal Automotive Systems (TWG-FAS)
+https://twg-fas.org/
+
+---
+
+INITIATIVE INFORMATION:
+
+  The Technical Working Group for Formal Automotive Systems (TWG-FAS) is an open,
+  collaborative initiative to develop Vehicle Machine Language (VML), a formal
+  behavioral representation standard for AI-driven automotive systems.
+
+  Organization: Multi-stakeholder open initiative
+  Founded: 2025
+  Repository: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas
+  Contributors: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/blob/main/contributors/contributors.md
+
+---
+
+WEBSITE & DOCUMENTATION:
+
+  This website and documentation are maintained by the TWG-FAS initiative.
+  Contributions are welcome via GitHub pull requests or discussions.
+
+  Website: https://twg-fas.org/
+  GitHub: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas
+
+---
+
+GOVERNANCE:
+
+  Decision Making: https://twg-fas.org/governance/decision-making
+  Standards Development: https://twg-fas.org/governance/standards-development-process
+  Code of Conduct: https://twg-fas.org/CODE_OF_CONDUCT.md
+
+---
+
+TECHNOLOGY & RESOURCES:
+
+  Technologies Used:
+  - HTML5 / CSS3 / Vanilla JavaScript
+  - Open standard formats (PDF, Markdown, XML)
+  - GitHub for version control and collaboration
+
+  Accessibility: This website is designed to be accessible to all users.
+  Standards: WCAG 2.1 Level AA
+
+---
+
+CONTACT:
+
+  For inquiries, contributions, or to join the initiative:
+  GitHub Discussions: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/discussions
+  General Contact: See contact form at https://twg-fas.org/#contact
+
+---
+
+CONTRIBUTORS:
+
+  This project is built on contributions from domain experts, researchers,
+  and practitioners in automotive AI, formal verification, and safety.
+  
+  See the complete contributors list at:
+  https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/blob/main/contributors/contributors.md
+
+---
+
+Last Updated: 2026-07-28

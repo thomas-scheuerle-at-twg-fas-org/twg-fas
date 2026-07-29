@@ -1,0 +1,629 @@
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+
+\definecolor{vmlnavy}{HTML}{0A1628}
+\definecolor{vmlblue}{HTML}{2E6BE6}
+\definecolor{vmlmuted}{HTML}{4B5F7A}
+\definecolor{vmlcode}{HTML}{F6F8FA}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=vmlblue,
+  urlcolor=vmlblue,
+  citecolor=vmlblue,
+  pdftitle={Vehicle Machine Language (VML) -- White Paper},
+  pdfauthor={Technical Working Group for Formal Automotive Systems},
+  pdfsubject={Open standard proposal for formal behavioral representation in AI-driven automotive systems},
+  pdfkeywords={VML, autonomous driving, formal methods, open standard, verification, runtime monitoring}
+}
+
+
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Vehicle Machine Language (VML)}
+\rhead{White Paper Draft v0.1}
+\cfoot{\thepage}
+
+
+\newcommand{\VML}{\textsc{VML}}
+\newcommand{\TWGFAS}{TWG\,$\cdot$\,FAS}
+\newcommand{\IR}{intermediate representation}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{24mm}
+  {\Huge\bfseries Vehicle Machine Language (\VML)\\[3mm]}
+  {\Large White Paper Draft v0.1\\[12mm]}
+  {\large Technical Working Group for Formal Automotive Systems\\[4mm]}
+  {\large Open, vendor-neutral working draft\\[20mm]}
+  \begin{minipage}{0.78\textwidth}
+    \centering
+    \itshape
+    Natural language belongs to engineering.\\
+    Formal languages belong to runtime systems.
+  \end{minipage}
+  \vfill
+  {\large \today\\[2mm]}
+  {\small Status: initiative phase; not a final standard.}
+\end{titlepage}
+
+\begin{center}
+\textbf{Origin:} https://twg-fas.org
+\end{center}
+
+\tableofcontents
+\newpage
+
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+Modern automotive systems increasingly combine perception, reasoning and planning through AI-based architectures, including foundation models and vision-language-action systems. These systems can support engineering, simulation and specification activities, but natural language itself is not a suitable runtime execution language for safety-critical vehicle behavior. It is ambiguous, context-dependent, difficult to certify, and unsuitable as the sole basis for deterministic execution.
+
+\VML{} is proposed as an open standard for formal behavioral representation in AI-driven automotive systems. It provides a formally defined \IR{} between human-level requirements and runtime vehicle behavior. Foundation models may act as semantic compilers from requirements, scenarios and engineering intent into \VML; however, runtime systems operate exclusively on \VML{} artifacts with deterministic semantics, type checks, monitor semantics and verification interfaces.
+
+The long-term transformation chain is:
+\[
+  \text{Natural Language} \;\longrightarrow\; \VML{} \;\longrightarrow\; \text{Vehicle Behavior}.
+\]
+The purpose of this white paper is to define the motivation, architectural role, design principles, initial language layers and standardization path for \VML{} as an open, vendor-neutral foundation for transparent, verifiable and certifiable autonomous driving behavior.
+
+\section{Motivation}
+\subsection{The problem: natural language at the edge of runtime}
+Natural language is excellent for communication between humans. It supports negotiation, underspecification, context and pragmatic interpretation. These properties are beneficial during requirements engineering, safety analysis and architecture discussions, but they become liabilities when natural language directly influences safety-critical runtime decisions.
+
+A runtime decision system must support repeatable interpretation, testability, traceability and safety argumentation. A sentence such as ``yield to pedestrians when necessary'' may be intuitive to engineers, yet it leaves open the meaning of \emph{pedestrian}, \emph{yield}, \emph{necessary}, the relevant time horizon, the applicable confidence threshold, and what fallback obligation applies when the primary obligation cannot be fulfilled. Such ambiguity is unacceptable as the final representation consumed by a vehicle controller.
+
+\subsection{The principle: separate human communication from machine execution}
+\VML{} enforces a separation of concerns:
+\begin{itemize}
+  \item Natural language is used at engineering time for expressing intent, requirements, scenarios and design rationale.
+  \item Foundation models may translate or assist in translating that intent into formal specifications.
+  \item Runtime systems consume only formal \VML{} artifacts: typed, checked, monitorable and executable.
+\end{itemize}
+This makes modern AI useful without making opaque natural-language prompts part of the safety-critical runtime contract.
+
+\subsection{Why an open standard?}
+Future automotive AI should not depend on proprietary behavioral languages. The behavior representation that connects engineering, verification and runtime execution should be open, inspectable and implementable by multiple organizations. An open standard enables interoperability, independent verification, transparent certification, academic research, regulatory collaboration and long-term maintainability.
+
+The goal of \VML{} is not to standardize AI models, perception stacks or planners. The goal is to standardize the formal representation of behavioral intent that such systems generate, consume, verify or monitor.
+
+\section{Vision and Scope}
+\subsection{Vision}
+\VML{} is envisioned as the formal behavioral representation inside future AI-based driving systems. It provides a common semantic target for requirements, traffic rules, safety constraints, planning goals, deontic policies, probabilistic perception outputs and runtime monitor verdicts.
+
+In the intended architecture, a foundation model is not a runtime authority. It is a semantic compiler that produces a formal program. The formal program is then parsed, type-checked, verified, monitored and executed through deterministic components.
+
+\subsection{In scope for the initial standardization effort}
+The initial scope includes:
+\begin{itemize}
+  \item a core logical and temporal language for behavioral constraints;
+  \item metric comparisons over vehicle and environment state;
+  \item goal specifications for planners;
+  \item deontic constructs for obligations, permissions and prohibitions;
+  \item optional probabilistic constructs for uncertain perception outputs;
+  \item optional ontology constructs for class membership and inheritance;
+  \item optional utility constructs for lexicographic optimization;
+  \item static semantics, dynamic semantics and runtime monitor outputs;
+  \item reference execution pipeline guidance;
+  \item conformance levels and conformance tests.
+\end{itemize}
+
+\subsection{Out of scope for version 0.1}
+The following topics are intentionally out of scope for the first working draft:
+\begin{itemize}
+  \item full denotational semantics for every probabilistic operator variant;
+  \item a standardized ontology exchange format between organizations;
+  \item complete certification argument templates;
+  \item code generation for any specific vehicle platform;
+  \item standardization of perception, planning or foundation-model implementations.
+\end{itemize}
+
+\section{Reference Architecture}
+\subsection{Pipeline}
+A reference \VML{} pipeline is shown conceptually as:
+\[
+\begin{array}{c}
+\text{Human Requirements} \\
+\downarrow \\
+\text{Foundation Model as Semantic Compiler} \\
+\downarrow \\
+\VML{}\ \text{Specification} \\
+\downarrow \\
+\text{Parser}\rightarrow\text{AST}\rightarrow\text{Type Checker}\rightarrow\text{Formal Verification} \\
+\downarrow \\
+\text{Runtime Monitor / Constraint Filter / Trajectory Optimizer} \\
+\downarrow \\
+\text{Vehicle Controller}
+\end{array}
+\]
+The decisive architectural constraint is that natural language does not directly control the vehicle. Natural language may influence the engineering process, but runtime behavior is mediated by formally checked \VML{} specifications.
+
+\subsection{Reference execution pipeline}
+A minimal implementation pipeline is:
+\[
+  \text{Lexer} \rightarrow \text{Parser} \rightarrow \text{AST} \rightarrow \text{Type Checker} \rightarrow \text{Rule Engine / Monitor}.
+\]
+A planner-integrated pipeline is:
+\[
+  \text{Perception State} \rightarrow \VML{}\ \text{Evaluator} \rightarrow \text{Constraint Filter} \rightarrow \text{Trajectory Optimizer} \rightarrow \text{Controller}.
+\]
+
+\subsection{Online monitor loop}
+\begin{verbatim}
+for each incoming state S_k:
+  update atom table and numeric store
+  evaluate guards and activate applicable deontic rules
+  progress temporal monitors
+  evaluate hard constraints and record violations
+  update goals and optimization context
+  publish verdict/event stream
+\end{verbatim}
+
+\section{System Model}
+\subsection{Execution trace}
+A run is a discrete state trace
+\[
+  \sigma = S_0, S_1, S_2, \ldots
+\]
+with sample period $\Delta t > 0$, fixed globally or piecewise fixed by implementation configuration.
+
+\subsection{State shape}
+Each state $S_k$ may contain:
+\begin{itemize}
+  \item Boolean atoms, for example \texttt{Collision = FALSE};
+  \item numeric variables, for example \texttt{Ego.Velocity = 7.3};
+  \item optional probability fields, for example \texttt{P(IsPedestrian(Obj1)) = 0.92};
+  \item optional symbolic class memberships, for example \texttt{Obj1 ISA Pedestrian}.
+\end{itemize}
+A \VML{} implementation must define how perception, localization, prediction, map and planner state are mapped into this canonical state representation.
+
+\section{Layered Language Model}
+\VML{} is structured as a composition of layers. Each layer addresses a fundamental aspect of autonomous behavior specification:
+\[
+  \VML = L \oplus T \oplus M \oplus P \oplus G \oplus D \oplus O \oplus U.
+\]
+Layers are integrated but can be implemented incrementally.
+
+\begin{longtable}{@{}p{0.09\textwidth}p{0.25\textwidth}p{0.55\textwidth}@{}}
+\toprule
+Layer & Name & Guiding question \\
+\midrule
+$L$ & Logical & What facts hold? What exists and what is true? \\
+$T$ & Temporal & When must it happen? When must it hold? \\
+$M$ & Metric & How much? Distances, velocities, thresholds and numeric constraints. \\
+$P$ & Probabilistic & How certain is perception or prediction? \\
+$G$ & Goal & What outcomes are desired? \\
+$D$ & Deontic & What is obligatory, permitted or forbidden? \\
+$O$ & Ontology & What classes and inheritance relationships apply? \\
+$U$ & Utility & How are soft objectives ranked? \\
+\bottomrule
+\end{longtable}
+
+\subsection{Core and extended profiles}
+\VML{} defines two initial conformance profiles:
+\begin{description}
+  \item[Core profile.] Required for 0.1 conformance. Includes logic, temporal operators, metric comparisons, goals, obligations and monitor semantics.
+  \item[Extended profile.] Optional for 0.1. Includes probabilistic expressions, ontology declarations, utility optimization objectives, contrary-to-duty deontics and assumptions.
+\end{description}
+
+\section{Core Semantics}
+\subsection{Boolean and temporal semantics}
+Let $\sigma,k \vDash \varphi$ mean that formula $\varphi$ holds at state index $k$ in trace $\sigma$. Core temporal semantics are:
+\begin{align*}
+\sigma,k \vDash \neg\varphi &\Leftrightarrow \neg(\sigma,k \vDash \varphi),\\
+\sigma,k \vDash \varphi \land \psi &\Leftrightarrow (\sigma,k \vDash \varphi) \land (\sigma,k \vDash \psi),\\
+\sigma,k \vDash \varphi \lor \psi &\Leftrightarrow (\sigma,k \vDash \varphi) \lor (\sigma,k \vDash \psi),\\
+\sigma,k \vDash \varphi \Rightarrow \psi &\Leftrightarrow \neg(\sigma,k \vDash \varphi) \lor (\sigma,k \vDash \psi),\\
+\sigma,k \vDash \textsc{Next}\ \varphi &\Leftrightarrow \sigma,k+1 \vDash \varphi,\\
+\sigma,k \vDash \textsc{Always}\ \varphi &\Leftrightarrow \forall j \ge k : \sigma,j \vDash \varphi,\\
+\sigma,k \vDash \textsc{Eventually}\ \varphi &\Leftrightarrow \exists j \ge k : \sigma,j \vDash \varphi,\\
+\sigma,k \vDash \varphi\ \textsc{Until}\ \psi &\Leftrightarrow \exists j \ge k : \sigma,j \vDash \psi \land \forall i \in [k,j): \sigma,i \vDash \varphi.
+\end{align*}
+
+\subsection{Deontic monitor semantics}
+For monitor semantics:
+\begin{itemize}
+  \item \texttt{OBLIGATORY e} produces a violation when $e$ is false in a state where it applies;
+  \item \texttt{PROHIBITED e} produces a violation when $e$ is true in a state where it applies;
+  \item \texttt{PERMITTED e} produces no direct violation and is used as policy metadata or a planner tie-break signal;
+  \item a \texttt{WHEN c} guard limits applicability to states where $c$ is true.
+\end{itemize}
+
+\subsection{Contrary-to-duty obligations}
+Safety-critical behavior often contains sub-ideal cases. A primary obligation may be impossible without violating another obligation. \VML{} therefore supports contrary-to-duty logic:
+\[
+  \textsc{Obligatory}\ \alpha \ \textsc{Otherwise Obligatory}\ \beta.
+\]
+If $\alpha$ is violated or physically impossible in an applicable state, then $\beta$ becomes the secondary obligation. This is the formal basis for minimal-risk maneuvers and fallback behavior.
+
+\section{Concrete Syntax Draft}
+The following grammar sketches the first working draft syntax. It is intended as a normative starting point for parser behavior and conformance testing.
+
+\begin{verbatim}
+program      ::= declaration* statement*
+
+declaration  ::= class_decl | binding_decl
+class_decl   ::= "CLASS" IDENT "ISA" IDENT ("HAS" "{" attr_list "}")? ";"
+attr_list    ::= attr ("," attr)*
+attr         ::= IDENT ":" TYPE
+binding_decl ::= IDENT "=" literal ";"
+
+statement    ::= goal_stmt
+               | hard_rule
+               | deontic_stmt
+               | require_stmt
+               | optimize_stmt
+               | assume_stmt
+
+goal_stmt    ::= "GOAL" expr ";"
+
+hard_rule    ::= "ALWAYS" expr ";"
+               | "EVENTUALLY" expr ";"
+               | "NEXT" expr ";"
+               | expr "UNTIL" expr ";"
+               | expr ";"
+
+require_stmt ::= "REQUIRE" "(" expr ")" "IMPLIES" statement
+
+optimize_stmt ::= "OPTIMIZE" "PRIORITY" "(" INT ")"
+                  ("MINIMIZE" | "MAXIMIZE") expr ";"
+
+assume_stmt  ::= "ASSUME" expr ";"
+
+deontic_stmt ::= deontic_op expr ("WHEN" expr)?
+                 ("OTHERWISE" deontic_stmt)? ";"
+deontic_op   ::= "OBLIGATORY" | "PERMITTED" | "PROHIBITED"
+
+expr         ::= impl_expr
+impl_expr    ::= or_expr ("IMPLIES" or_expr)*
+or_expr      ::= and_expr ("OR" and_expr)*
+and_expr     ::= unary_expr ("AND" unary_expr)*
+unary_expr   ::= "NOT" unary_expr | temporal_expr
+
+temporal_expr ::= "ALWAYS" unary_expr
+                | "EVENTUALLY" unary_expr
+                | "NEXT" unary_expr
+                | primary_expr ("UNTIL" primary_expr)?
+
+primary_expr ::= "(" expr ")"
+               | predicate
+               | comparison
+               | prob_expr
+               | isa_expr
+
+predicate    ::= IDENT ("(" arg_list ")")?
+arg_list     ::= expr ("," expr)*
+comparison   ::= value comparator value
+comparator   ::= "<" | "<=" | "=" | ">=" | ">"
+value        ::= IDENT | NUMBER | STRING | BOOLEAN
+isa_expr     ::= IDENT "ISA" IDENT
+
+prob_expr    ::= "P" "(" expr ")"
+               | "EXPECTED" "(" expr ")"
+               | "CDF" "(" expr ")"
+               | "EXPECTED_RISK" "(" arg_list ")"
+
+literal      ::= NUMBER | STRING | BOOLEAN
+TYPE         ::= "BOOLEAN" | "REAL" | "INT" | "STRING"
+IDENT        ::= /[A-Za-z_][A-Za-z0-9_.]*/
+NUMBER       ::= /-?[0-9]+(\.[0-9]+)?/
+STRING       ::= /"([^"\\]|\\.)*"/
+BOOLEAN      ::= "TRUE" | "FALSE"
+INT          ::= /[0-9]+/
+\end{verbatim}
+
+\section{Static Semantics}
+An implementation must reject programs that violate static checks. Core checks include:
+\begin{enumerate}
+  \item every referenced identifier has a declaration source, such as a state schema, binding or class member;
+  \item Boolean operators consume Boolean subexpressions;
+  \item numeric comparators consume numeric terms;
+  \item \texttt{UNTIL} has Boolean left and right operands;
+  \item \texttt{GOAL} expressions are Boolean;
+  \item deontic content for \texttt{OBLIGATORY}, \texttt{PROHIBITED} and \texttt{PERMITTED} is Boolean.
+\end{enumerate}
+Optional checks include:
+\begin{enumerate}
+  \item \texttt{P(...)} and \texttt{CDF(...)} evaluate to values in $[0,1]$;
+  \item \texttt{PRIORITY(n)} uses positive integer levels;
+  \item \texttt{ISA} relationships are acyclic;
+  \item probabilistic estimator sources and update frequencies are declared by implementation metadata.
+\end{enumerate}
+
+\section{Layer-by-Layer Guidance}
+\subsection{Logical layer}
+Purpose: define vocabulary, facts and relations.
+\begin{verbatim}
+PedestrianInCrosswalk;
+InLane(Ego, Lane_2);
+\end{verbatim}
+Implementations should maintain a symbol table for atoms and predicates, map sensor and planner outputs to canonical atom updates, and use stable naming conventions such as \texttt{Ego.Velocity} or \texttt{Obj12.IsPedestrian}.
+
+\subsection{Temporal layer}
+Purpose: encode persistence, liveness and ordered behavior.
+\begin{verbatim}
+ALWAYS (NOT Collision);
+Braking UNTIL CrossingClear;
+\end{verbatim}
+Temporal formulas may be compiled to monitor automata or progression states. Online monitoring requires per-formula runtime memory for open obligations and pending eventualities.
+
+\subsection{Metric layer}
+Purpose: encode numeric safety envelopes and dynamic limits.
+\begin{verbatim}
+ALWAYS (DistanceToPedestrian > 2.0);
+ALWAYS (Ego.LateralAcceleration < 2.5);
+\end{verbatim}
+Implementations should normalize units at ingestion and evaluate numeric comparisons after unit conversion and signal validity checks.
+
+\subsection{Probabilistic layer}
+Purpose: preserve uncertainty instead of collapsing uncertain perception into premature hard thresholds.
+\begin{verbatim}
+REQUIRE (P(IsPedestrian(Obj1)) > 0.95)
+IMPLIES OBLIGATORY (Ego.Velocity = 0);
+\end{verbatim}
+Perception systems output probabilistic classifications and state estimates. \VML{} bridges the perception-planning gap by representing world entities as stochastic states and by introducing operators over probability density functions, cumulative distribution functions and expectations.
+
+\subsection{Goal layer}
+Purpose: express desired outcomes pursued while respecting hard constraints.
+\begin{verbatim}
+GOAL At(Ego, Destination);
+\end{verbatim}
+Goals must not override hard safety violations. Implementations should maintain explicit goal status such as inactive, active, reached or blocked.
+
+\subsection{Deontic layer}
+Purpose: encode obligations, permissions, prohibitions and fallback duties.
+\begin{verbatim}
+OBLIGATORY YieldToPedestrian WHEN PedestrianInCrosswalk;
+PROHIBITED CrossSolidLine;
+\end{verbatim}
+A monitor should emit structured violation records including timestamp, rule identifier and witness signals.
+
+\subsection{Ontology layer}
+Purpose: reduce duplication by class inheritance.
+\begin{verbatim}
+CLASS VulnerableRoadUser ISA DynamicObstacle;
+CLASS Pedestrian ISA VulnerableRoadUser;
+OBLIGATORY YieldTo(target) WHEN (target ISA VulnerableRoadUser);
+\end{verbatim}
+If \texttt{Pedestrian ISA VulnerableRoadUser} is declared in the ontology, any detected pedestrian inherits rules written for vulnerable road users. This simplifies verification and reduces semantic compile size.
+
+\subsection{Utility layer}
+Purpose: represent soft objectives under strict priority ordering.
+\begin{verbatim}
+OPTIMIZE PRIORITY(1) MINIMIZE EXPECTED_RISK(Collision);
+OPTIMIZE PRIORITY(2) MINIMIZE Ego.LateralJerk + Ego.LongitudinalJerk;
+OPTIMIZE PRIORITY(3) MAXIMIZE Ego.Velocity;
+\end{verbatim}
+A higher-priority objective must not be compromised for a lower-priority objective. This supports multi-objective trajectory generation without hiding hard safety constraints inside a monolithic cost function.
+
+\section{Probabilistic and Statistical Extensions}
+\subsection{Probabilistic entity attributes}
+Every dynamic entity $e$ may have an associated probabilistic state vector. Example attributes include:
+\begin{itemize}
+  \item $P(e\ \textsc{ISA}\ C)$: categorical probability that entity $e$ belongs to class $C$;
+  \item $e.X \sim \mathcal{N}(\mu,\Sigma)$: spatial state vector represented as a distribution;
+  \item confidence, covariance or estimator metadata suitable for downstream risk computations.
+\end{itemize}
+
+\subsection{Expected risk}
+For safety-critical probabilistic terms, \VML{} may define an operator such as:
+\[
+  R(\text{Collision}) = \sum_{c \in \text{Classes}} P(e\ \textsc{ISA}\ c) \int_{x_e} p(x_{ego})p(x_e\mid c)\,dx \times \text{Severity}(c).
+\]
+This supports rules over expected harm rather than rules over brittle binary object classifications.
+
+\begin{verbatim}
+-- Stop rule based on collision probability and entity class severity
+ALWAYS REQUIRE (EXPECTED_RISK(Collision, Ego, Obstacle_1) > 10^-5)
+IMPLIES
+  OBLIGATORY (Ego.Velocity = 0 UNTIL
+              EXPECTED_RISK(Collision, Ego, Obstacle_1) <= 10^-6);
+\end{verbatim}
+
+\section{Spatial-Topological Logic}
+Autonomous driving rules often become brittle when expressed only in absolute coordinates. \VML{} should therefore support qualitative spatial relations, inspired by region connection calculi, over two-dimensional regions such as bounding boxes, lanes, safety envelopes and crosswalk areas.
+
+Example predicates include:
+\begin{itemize}
+  \item \texttt{Spatial.DC(A,B)}: disconnected;
+  \item \texttt{Spatial.EC(A,B)}: externally connected;
+  \item \texttt{Spatial.PO(A,B)}: partial overlap;
+  \item \texttt{Spatial.TPP(A,B)}: tangential proper part.
+\end{itemize}
+
+\begin{verbatim}
+-- Formalizing safe keeping using topological relations
+ALWAYS PROHIBITED (Spatial.PO(Ego.BoundingBox, Vehicle_1.SafetyEnvelope));
+\end{verbatim}
+
+\section{Multi-Agent Assumptions}
+Safety guarantees depend on explicit assumptions about other agents. Overly optimistic assumptions such as ``other drivers always obey stop signs'' are unsafe. Overly pessimistic assumptions such as ``other drivers may accelerate into ego at any second'' lead to freezing behavior. \VML{} therefore includes conditional assumptions to define game-theoretic boundaries of cooperation.
+
+\begin{verbatim}
+-- Assume cooperative play under bounded rationality
+ASSUME ALWAYS (EXPECTED_RISK(Collision, OtherVehicle, Ego) < 10^-2)
+IMPLIES
+  ALWAYS OBLIGATORY (MaintainSmoothTrajectory(Ego));
+\end{verbatim}
+
+\section{Unified Use Case: Unprotected Left Turn}
+The following example illustrates how ontology, probabilistic risk, deontic fallback and utility objectives can be combined.
+
+\begin{verbatim}
+-- Unprotected Left Turn VML Specification (illustrative draft)
+
+-- 1. Ontological mapping
+CLASS OncomingVehicle ISA Vehicle;
+CLASS CrosswalkPedestrian ISA Pedestrian;
+
+-- 2. Utility layer optimization goals
+OPTIMIZE PRIORITY(1) MINIMIZE EXPECTED_RISK(Collision);
+OPTIMIZE PRIORITY(2) MINIMIZE Ego.LateralJerk;
+OPTIMIZE PRIORITY(3) MAXIMIZE Ego.Velocity;
+
+-- 3. Behavioral rules
+-- Rule A: hard obligation to stop for pedestrian if risk is high
+ALWAYS REQUIRE (EXPECTED_RISK(Collision, Ego, target) > 10^-5
+                AND target ISA Pedestrian)
+IMPLIES
+  OBLIGATORY (Ego.Velocity = 0.0)
+  OTHERWISE OBLIGATORY (
+    Ego.Maneuver = SafeBrakingToShoulder
+  );
+
+-- Rule B: execute unprotected left turn only when gap is statistically safe
+ALWAYS OBLIGATORY (
+  Ego.Maneuver = ExecuteLeftTurn
+)
+WHEN (
+  EXPECTED_RISK(Collision, Ego, OncomingVehicle) < 10^-6 AND
+  CDF(OncomingVehicle.Velocity > 25.0) < 0.02
+)
+OTHERWISE OBLIGATORY (
+  Ego.Velocity = 0.0 AND Ego.Maneuver = YieldAtIntersection
+);
+
+-- Rule C: respect spatial safety boundaries topologically
+ALWAYS PROHIBITED (
+  Spatial.PO(Ego.BoundingBox, Crosswalk.Boundary)
+)
+WHEN (
+  EXPECTED_RISK(Collision, Ego, target) > 10^-6 AND
+  target ISA VulnerableRoadUser
+);
+\end{verbatim}
+
+\section{Natural Language to \VML{} Translation Workflow}
+A recommended engineering workflow is:
+\begin{enumerate}
+  \item parse the requirement sentence into actor, condition, action and timing;
+  \item map domain terms to canonical ontology symbols;
+  \item distinguish hard constraints from goals and soft objectives;
+  \item introduce numeric thresholds and units explicitly;
+  \item add fallback deontic obligations for infeasible primary duties;
+  \item run type checks and simulation traces;
+  \item revise the \VML{} program until monitor verdicts are stable and reviewable.
+\end{enumerate}
+
+This workflow is compatible with human authoring, AI-assisted drafting, static analysis and formal review. A foundation model may generate candidate \VML{} programs, but conformance depends on deterministic parsing, type checking, test execution and reviewable semantics.
+
+\section{Normative Runtime Outputs}
+A conforming runtime monitor should expose at least:
+\begin{itemize}
+  \item \texttt{rule\_id}: identifier of the evaluated rule;
+  \item timestamp: state index and wall time if available;
+  \item status in \{\texttt{satisfied}, \texttt{violated}, \texttt{pending}\};
+  \item evidence: minimal set of signal values used in the decision;
+  \item optional confidence or estimator metadata for probabilistic decisions;
+  \item optional remediation or fallback obligation identifiers.
+\end{itemize}
+
+\section{Verification and Certification Interfaces}
+\VML{} is designed to support several complementary verification methods:
+\begin{itemize}
+  \item syntactic conformance tests for parsers;
+  \item type and consistency checks for specifications;
+  \item model checking for finite abstractions;
+  \item theorem-proving hooks for semantic fragments;
+  \item runtime monitoring over observed traces;
+  \item scenario-based simulation against expected verdict streams;
+  \item regression tests for natural-language-to-\VML{} compiler output.
+\end{itemize}
+
+A key design goal is that authorities, auditors and development partners can inspect behavioral rules without requiring disclosure of proprietary perception network weights, generative model parameters or planner internals.
+
+\section{Conformance Strategy}
+\subsection{Profile-based conformance}
+Version 0.1 should define profile-based conformance:
+\begin{description}
+  \item[Core parser conformance.] The implementation accepts and rejects programs according to the normative grammar.
+  \item[Core monitor conformance.] The implementation produces required verdicts for Boolean, temporal, metric, goal and deontic constructs.
+  \item[Extended feature conformance.] The implementation documents support for probabilistic, ontology and utility layers.
+  \item[Trace conformance.] The implementation produces reproducible verdict streams over standardized input traces.
+\end{description}
+
+\subsection{Reference test artifacts}
+The working group should maintain:
+\begin{itemize}
+  \item grammar acceptance and rejection suites;
+  \item typed example programs;
+  \item canonical state traces;
+  \item expected monitor verdict streams;
+  \item negative examples for ambiguity, type errors and unsupported constructs;
+  \item implementation reports for independent tools.
+\end{itemize}
+
+\section{Open Standard Development Model}
+\subsection{Vendor-neutral collaboration}
+\VML{} should be developed by a technical working group open to automotive OEMs, tier-1 suppliers, semiconductor vendors, software companies, universities, research institutes, standardization organizations, government agencies and independent researchers.
+
+\subsection{Governance principles}
+The open standard process should follow these principles:
+\begin{itemize}
+  \item public working drafts and public issue tracking where possible;
+  \item clear distinction between normative and informative text;
+  \item reference implementations under permissive licensing where feasible;
+  \item conformance tests published alongside the specification;
+  \item compatibility policy for future versions;
+  \item transparent intellectual-property and contribution rules;
+  \item review by safety, formal-methods and automotive-domain experts.
+\end{itemize}
+
+\section{Roadmap}
+A pragmatic roadmap is:
+\begin{enumerate}
+  \item stabilize the motivation, architecture and terminology;
+  \item publish this white paper as the entry document for the initiative;
+  \item publish \VML{} language specification draft v0.1;
+  \item assemble a minimal reference parser and monitor;
+  \item define conformance traces and expected verdicts;
+  \item refine probabilistic, deontic, ontology and utility extensions;
+  \item engage external contributors and establish formal working mode;
+  \item prepare a public draft standard candidate.
+\end{enumerate}
+
+\section{Conclusion}
+\VML{} proposes a practical formal foundation for AI-driven vehicle behavior: natural language at design time, formal language at runtime. It allows foundation models to support engineering as semantic compilers while preserving deterministic runtime semantics, verification, monitorability and certification traceability.
+
+The central claim is simple:
+\[
+  \text{Natural Language} \ne \text{Runtime Language}.
+\]
+By standardizing the formal representation of behavioral intent rather than the AI models themselves, \VML{} can become a common interface between requirements engineering, AI-assisted specification, simulation, verification, planning and deployment. As an open standard, it can help the automotive ecosystem build transparent and certifiable AI-driven systems without locking safety-critical behavior into proprietary or ambiguous representations.
+
+\appendix
+\section{Glossary}
+\begin{description}
+  \item[Behavioral intent] The intended vehicle behavior expressed as rules, goals, constraints and policies.
+  \item[Deontic rule] A rule expressing obligation, permission or prohibition.
+  \item[Foundation model] A large AI model used here as an engineering-time semantic compiler, not as a runtime authority.
+  \item[Intermediate representation] A formal language between human requirements and executable vehicle behavior.
+  \item[Monitor verdict] A runtime output indicating whether a rule is satisfied, violated or pending over a trace.
+  \item[Open standard] A specification developed through an open, vendor-neutral process with implementable conformance criteria.
+\end{description}
+
+\section{Minimal Website Link Integration}
+For the website draft, the document can be linked as:
+\begin{verbatim}
+<a href="docs/VML_whitepaper_v0_1.pdf" class="doc-link">PDF</a>
+\end{verbatim}
+A matching source file can be maintained as:
+\begin{verbatim}
+docs/VML_whitepaper_v0_1.tex
+\end{verbatim}
+
+\end{document}

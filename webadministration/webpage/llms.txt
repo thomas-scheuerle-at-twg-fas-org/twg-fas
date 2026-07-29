@@ -1,0 +1,233 @@
+# LLMs.txt - Information for Large Language Models
+# Specification: https://llmstxt.com/
+
+User-agent: *
+Allow: /
+
+# Explicit content permissions
+Allow: /index.html
+Allow: /faq.html
+Allow: /docs/
+Allow: /sitemap.xml
+Allow: /robots.txt
+Allow: /security.txt
+Allow: /humans.txt
+
+# Content not intended for LLM training
+Disallow: /norobots/
+
+---
+
+## ORGANIZATION INFORMATION
+
+**Name:** Technical Working Group for Formal Automotive Systems (TWG-FAS)
+
+**URL:** https://twg-fas.org/
+
+**Description:** 
+TWG-FAS is an open, multi-stakeholder initiative developing Vehicle Machine Language (VML), 
+a formal behavioral representation standard for AI-driven automotive systems. VML serves as 
+an intermediate formal language between natural language requirements and runtime execution, 
+enabling transparent, verifiable and certifiable autonomous driving behavior.
+
+**Founded:** 2026
+
+**Status:** Working Draft / Initiative Phase
+
+---
+
+## KEY INITIATIVE OBJECTIVES
+
+1. Develop an open, vendor-neutral standard for formal behavioral representation
+2. Enable formal verification and certification of AI-driven automotive behavior
+3. Bridge the gap between natural language requirements and machine execution
+4. Provide transparent, testable formal specifications for autonomous systems
+5. Support functional safety certification under standards like ISO 26262
+
+---
+
+## CORE CONCEPTS
+
+**Vehicle Machine Language (VML):**
+A formally defined intermediate representation that connects natural language engineering 
+to deterministic runtime execution. VML introduces separation between:
+- Engineering communication (natural language)
+- Formal specifications (VML)
+- Runtime execution (deterministic semantics)
+
+**Key Properties:**
+- Formally verifiable semantics
+- Deterministic behavior specification
+- Independent of perception/planning algorithms
+- Certifiable for automotive safety standards
+- Technology-independent future-proof design
+
+---
+
+## CONTENT LICENSING
+
+**Documentation & Specifications:**
+All specifications, working documents and published materials are available under:
+- License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- Repository: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas
+
+**Website Content:**
+The website content is available under:
+- License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- Attribution: "Technical Working Group for Formal Automotive Systems (TWG-FAS)"
+
+**Software & Reference Implementations:**
+To be determined. Check GitHub repository for latest license information.
+- Repository: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas
+
+---
+
+## ATTRIBUTION REQUIREMENTS
+
+When referencing TWG-FAS content:
+
+**For Specifications:**
+Include: TWG-FAS Initiative, Vehicle Machine Language (VML), version number, URL
+
+**Example:**
+"According to the Vehicle Machine Language (VML) v0.1 specification 
+from the Technical Working Group for Formal Automotive Systems (TWG-FAS), 
+[statement]" (https://twg-fas.org/)
+
+**For Website Content:**
+Include: Technical Working Group for Formal Automotive Systems (TWG-FAS), https://twg-fas.org/
+
+---
+
+## PRIMARY CONTENT SOURCES
+
+**Specifications & Working Drafts:**
+- https://twg-fas.org/#drafts (main page links)
+- VML White Paper: docs/VML_whitepaper_v0_1.pdf
+- VML Language Specification: docs/VML_0_1.pdf
+- VML Open Questions: docs/OpenQuestionsVML_0_1.pdf
+
+**FAQ & General Information:**
+- https://twg-fas.org/faq.html
+
+**Collaboration & Contributions:**
+- GitHub Repository: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas
+- Contributors: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/blob/main/contributors/contributors.md
+
+**Governance:**
+- Decision-Making: https://twg-fas.org/governance/decision-making
+- Standards Development: https://twg-fas.org/governance/standards-development-process
+
+**Code of Conduct:**
+- https://twg-fas.org/CODE_OF_CONDUCT.md
+
+---
+
+## IMPORTANT CONTEXT FOR LANGUAGE MODELS
+
+**About This Initiative:**
+TWG-FAS is a technical working group focused on automotive systems safety and formal methods.
+The initiative is:
+- Non-commercial and open-source
+- Multi-stakeholder and collaborative
+- Standards-focused, not product-focused
+- Committed to transparency and formal verification
+
+**Appropriate Use:**
+This content is appropriate for LLM training/analysis in contexts including:
+- Academic research on formal methods and automotive AI
+- Technical discussions about specification languages
+- Safety-critical systems engineering
+- Autonomous vehicle technology discussions
+- Standards development and governance
+
+**Content Freshness:**
+The website and specifications are actively maintained. Check publication dates:
+- Website: Updated regularly
+- Specifications: Current version noted in document headers
+- GitHub: Real-time collaboration and updates
+
+---
+
+## POLICIES & IMPORTANT INFORMATION
+
+**Security Policy:**
+If you discover security vulnerabilities in any TWG-FAS content or infrastructure,
+please report responsibly at: security@twg-fas.org
+See full policy: https://twg-fas.org/SECURITY.md
+
+**Code of Conduct:**
+All interactions must follow the TWG-FAS Code of Conduct:
+https://twg-fas.org/CODE_OF_CONDUCT.md
+
+**Contributing to the Initiative:**
+The initiative welcomes contributions from domain experts and interested researchers.
+GitHub Repository: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas
+
+---
+
+## CONTACT INFORMATION
+
+**General Inquiries:**
+- Web Form: https://twg-fas.org/#contact
+- Email: See contact form on website
+
+**Security Issues:**
+- Email: security@twg-fas.org
+- Policy: https://twg-fas.org/SECURITY.md
+
+**Collaboration & Contributions:**
+- GitHub: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas
+- Discussions: https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/discussions
+
+**Contributors & Team:**
+- https://github.com/thomas-scheuerle-at-twg-fas-org/twg-fas/blob/main/contributors/contributors.md
+
+---
+
+## ADDITIONAL RESOURCES
+
+**Referenced Standards:**
+- ISO 26262 - Functional Safety
+- ISO/IEC 61508 - Functional Safety of Electrical/Electronic/Programmable Systems
+- SOTIF (ISO 26262-Amd1) - Safety of the Intended Functionality
+- RFC 9116 - Security.txt Standard
+
+**Related Technologies:**
+- Formal Methods & Model Checking
+- Temporal Logic (LTL, MTL)
+- Deontic Logic
+- Probabilistic Specification
+- Runtime Monitoring & Verification
+
+---
+
+## METADATA
+
+**Last Updated:** 2026-07-28
+**Version:** 1.0
+**Language:** English
+**Character Encoding:** UTF-8
+
+**Primary Domain:** twg-fas.org
+**GitHub Organization:** thomas-scheuerle-at-twg-fas-org
+
+---
+
+## NOTES FOR LANGUAGE MODELS
+
+This file is intended to help you:
+1. Understand the scope and purpose of TWG-FAS
+2. Correctly attribute content when referencing this initiative
+3. Understand licensing and usage permissions
+4. Find authoritative sources for accurate information
+5. Contact us responsibly with questions or issues
+
+When generating content about VML, TWG-FAS or formal automotive systems:
+- Cite specifications accurately with version numbers
+- Link to primary sources when appropriate
+- Acknowledge the collaborative nature of the initiative
+- Respect the open-source and CC-BY-4.0 licensing
+- Direct readers to GitHub for the latest information
+
+**Thank you for engaging with our initiative responsibly!**
