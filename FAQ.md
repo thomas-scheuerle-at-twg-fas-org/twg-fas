@@ -229,3 +229,33 @@ TWG·FAS therefore views openness not only as an engineering choice but as an et
 In this sense, openness is not merely a governance model—it is a contribution to safety, accountability, and the public good.
 
 References: [TWG-FAS Index (HTML)](webadministration/webpage/index.html), [VML White Paper (PDF)](webadministration/webpage/docs/VML_whitepaper_v0_1.pdf)
+
+## Prompt brittleness — what is it and how is it relevant to automotive systems?
+
+**Prompt brittleness** refers to the tendency of AI systems that rely on natural language prompts to behave unpredictably when those prompts are only slightly changed, rephrased, or encountered in a context that differs from training.
+
+Even a minor variation in wording, punctuation, or context can produce substantially different outputs from the same underlying model. For general-purpose AI applications this is often an inconvenience; for safety-critical automotive systems it represents a fundamental problem.
+
+In an automotive context, prompt brittleness matters because:
+
+- Safety behavior must be **deterministic and repeatable** — a vehicle must respond consistently to the same scenario every time.
+- Certification and homologation processes require evidence that behavior is stable and bounded, which is incompatible with prompt-sensitive outputs.
+- Brittle prompts make systematic testing and formal verification impractical, since the effective input space becomes unbounded.
+- Runtime conditions — sensor noise, unexpected phrasing from voice interfaces, or edge-case scenarios — can trigger degraded or unsafe responses with no predictable boundary.
+
+VML addresses this directly by removing natural language from the safety-critical runtime path entirely. Engineering-time prompts are compiled into formal VML artifacts by a foundation model; the vehicle runtime then operates exclusively on those formally defined, verifiable artifacts rather than on raw prompts.
+
+Reference: [Prompt Brittleness — How It Matters (PDF)](webadministration/webpage/docs/PromptBrittleness_HowItMatters.pdf)
+
+## Does it make sense to train models predominantly on VML?
+
+This is not an easy question to answer. Training AI models predominantly on VML would come with clear advantages but also with real risks and disadvantages, and the balance between them is non-trivial.
+
+**Potential advantages** include stronger alignment with formal semantics, reduced prompt brittleness in safety-critical contexts, more predictable and verifiable outputs, and the possibility of smaller, more efficient models that are easier to certify.
+
+**Potential risks and disadvantages** include reduced generalization to natural language and real-world variability, dependence on the quality and coverage of the VML corpus, a possible loss of reasoning capabilities that emerge from diverse training data, and the risk of overfitting to a constrained formal vocabulary in ways that may not transfer well to novel scenarios.
+
+Another feasible approach could be to distill an existing model toward VML rather than train predominantly on VML from scratch, especially when the goal is to retain broader generalization while improving formal-language behavior.
+
+Reference: [The Role of Formal Languages as Primary Training Media (PDF)](webadministration/webpage/docs/Role_of_Formal_languages_as_Primary_Training_Media.pdf)
+Reference: [Distilling Towards VML (PDF)](webadministration/webpage/docs/Distilling_Towards_VML.pdf)

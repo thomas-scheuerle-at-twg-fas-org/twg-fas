@@ -117,6 +117,28 @@
     .card-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 1.2rem; margin-top: 2rem; }
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; }
     .card-icon { font-size: 1.4rem; margin-bottom: 0.7rem; }
+    .problem-card-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .problem-card-link:hover {
+      border-color: var(--accent2);
+      box-shadow: 0 8px 20px rgba(10,22,40,0.25);
+      transform: translateY(-2px);
+    }
+    .problem-card-link:focus-visible {
+      outline: 2px solid var(--accent2);
+      outline-offset: 2px;
+      border-color: var(--accent2);
+    }
+    .problem-card-cta {
+      margin-top: 0.7rem;
+      color: #ffcc66;
+      font-weight: 600;
+      margin-bottom: 0;
+    }
 
     /* TWO-COL */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
@@ -343,11 +365,12 @@
       runtime system.
     </p>
     <div class="card-grid">
-      <div class="card">
+      <a class="card problem-card-link" href="docs/PromptBrittleness_HowItMatters.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open Prompt Brittleness How It Matters document">
         <div class="card-icon">&#x26A0;</div>
         <h3>The Problem</h3>
         <p>Natural language ambiguity at runtime creates non-deterministic behavior that cannot be systematically verified or certified.</p>
-      </div>
+        <p class="problem-card-cta">Click me to learn more</p>
+      </a>
       <div class="card">
         <div class="card-icon">&#x1F52C;</div>
         <h3>The Principle</h3>

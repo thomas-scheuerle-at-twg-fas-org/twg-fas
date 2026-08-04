@@ -14,9 +14,30 @@
 
 <url>
   <loc>https://twg-fas.org/faq.html</loc>
-  <lastmod>2026-07-28T00:00:00+00:00</lastmod>
+  <lastmod>2026-08-04T00:00:00+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://twg-fas.org/docs/PromptBrittleness_HowItMatters.pdf</loc>
+  <lastmod>2026-08-03T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://twg-fas.org/docs/Role_of_Formal_languages_as_Primary_Training_Media.pdf</loc>
+  <lastmod>2026-08-04T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://twg-fas.org/docs/Distilling_Towards_VML.pdf</loc>
+  <lastmod>2026-08-04T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.7</priority>
 </url>
 
 </urlset>
